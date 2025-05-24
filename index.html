@@ -1,0 +1,2436 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>अष्टशील महिला बचत गट</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        .btn-danger {
+            background-color: #f44336;
+            color: white;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+        }
+        .flash-message {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            color: white;
+        }
+        .flash-success {
+            background-color: #28a745;
+        }
+        .flash-danger {
+            background-color: #dc3545;
+        }
+        .flash-info {
+            background-color: #17a2b8;
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            max-width: 600px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Table styles for user summary */
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .user-table th, .user-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .user-table th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+        .user-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .user-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .status-received {
+            color: green;
+            font-weight: bold;
+        }
+        .status-pending {
+            color: red;
+            font-weight: bold;
+        }
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .report-widget {
+            background-color: #e6f7ff; /* Light blue */
+            border: 1px solid #b3e0ff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .report-widget.profit {
+            background-color: #d4edda; /* Light green for profit */
+            border-color: #28a745;
+        }
+         .report-widget.loan {
+            background-color: #f8d7da; /* Light red for loan/pending */
+            border-color: #dc3545;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-button {
+            padding: 10px 15px;
+            background-color: #e2e8f0;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .tab-button.active {
+            background-color: #ffffff;
+            border-bottom: 2px solid #4CAF50;
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .transaction-table th, .transaction-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            white-space: nowrap; /* Prevent wrapping for better readability of data */
+        }
+        .transaction-table th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+            color: #555;
+        }
+        .transaction-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .transaction-table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .status-paid {
+            color: green;
+            font-weight: bold;
+        }
+        .status-pending {
+            color: orange;
+            font-weight: bold;
+        }
+        .status-not-applicable {
+            color: gray;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <header class="header flex justify-between items-center">
+            <h1 class="text-3xl font-bold" id="app-name-header"></h1>
+            <div id="auth-status" class="text-white text-lg font-medium"></div>
+            <button id="logout-btn" class="btn btn-danger hidden">Logout</button>
+        </header>
+
+        <div id="flash-messages" class="messages mb-4"></div>
+
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <h2 class="text-xl font-semibold mb-4">Login</h2>
+                <form id="login-form" class="space-y-4">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <p class="text-sm text-gray-600 mt-4">Admin: admin/admin | Guest: guest/guest</p>
+            </div>
+        </div>
+
+        <div id="app-content" style="display: none;">
+            <div class="card mb-6" id="group-selection-card">
+                <h2 class="text-xl font-semibold mb-4" id="select-group-heading"></h2>
+                <div class="mb-4 flex items-center space-x-4">
+                    <select name="group_id" id="groupSelect" class="form-control flex-grow border rounded p-2"></select>
+                    <button type="button" class="btn btn-primary" onclick="openModal('addGroupModal')" id="add-group-btn"></button>
+                </div>
+                <button type="button" class="btn btn-secondary mt-2 inline-block" onclick="showAllGroupsReport()" id="view-all-groups-report-btn"></button>
+            </div>
+
+            <div id="dashboard-content" style="display: none;">
+                <div class="card mb-6">
+                    <h2 class="text-2xl font-bold mb-4" id="group-financial-summary-heading"></h2>
+                    <div class="report-grid" id="group-summary-reports">
+                        </div>
+                </div>
+
+                <div class="card mb-6">
+                    <h2 class="text-2xl font-bold mb-4" id="users-and-loans-summary-heading"></h2>
+                    <div class="flex flex-wrap gap-4 mb-4">
+                        <button type="button" class="btn btn-primary" onclick="openModal('addUserModal')" id="add-new-user-btn"></button>
+                        <button type="button" class="btn btn-primary" onclick="openModal('addContributionModal')" id="add-contribution-btn"></button>
+                        <button type="button" class="btn btn-primary" onclick="openModal('addLoanModal')" id="add-new-loan-btn"></button>
+                        <button type="button" class="btn btn-secondary" onclick="downloadUsersCsv()" id="download-users-csv-btn"></button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="user-table w-full text-sm">
+                            <thead>
+                                <tr>
+                                    <th id="user-name-th"></th>
+                                    <th id="monthly-contribution-status-th"></th>
+                                    <th id="total-contribution-by-user-th"></th>
+                                    <th id="pending-contribution-by-user-th"></th>
+                                    <th id="pending-loan-amount-with-interest-th"></th>
+                                    <th id="total-amount-paid-by-user-till-date-th"></th>
+                                    <th id="loan-details-th"></th>
+                                    <th id="actions-th"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-data-tbody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card mb-6" id="csv-bulk-uploads-section">
+                    <h2 class="text-xl font-semibold mb-4" id="csv-bulk-uploads-heading">CSV Bulk Uploads</h2>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium mb-2" id="bulk-upload-transactions-heading"></h3>
+                        <form id="bulk-upload-transactions-form" class="space-y-4">
+                            <label for="transaction_csv" class="block text-sm font-medium text-gray-700" id="choose-csv-file-transactions-label"></label>
+                            <input type="file" name="file" id="transaction_csv" accept=".csv" class="form-control">
+                            <button type="submit" class="btn btn-primary" id="upload-transactions-btn"></button>
+                            <button type="button" class="btn btn-info" onclick="downloadSampleTransactionsCsv()" id="download-sample-transactions-btn"></button>
+                        </form>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-medium mb-2" id="bulk-upload-users-heading"></h3>
+                        <form id="bulk-upload-users-form" class="space-y-4">
+                            <label for="user_csv" class="block text-sm font-medium text-gray-700" id="choose-csv-file-users-label"></label>
+                            <input type="file" name="file" id="user_csv" accept=".csv" class="form-control">
+                            <button type="submit" class="btn btn-primary" id="upload-users-btn"></button>
+                            <button type="button" class="btn btn-info" onclick="downloadSampleUsersCsv()" id="download-sample-users-btn"></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div id="all-groups-report-content" style="display: none;">
+                <div class="mb-4">
+                    <button type="button" class="btn btn-secondary" onclick="showDashboard()" id="back-to-dashboard-btn-report"></button>
+                </div>
+                <div id="all-groups-report-cards">
+                    </div>
+            </div>
+
+            <div id="view-transactions-content" style="display: none;">
+                <header class="header">
+                    <h1 class="text-3xl font-bold" id="view-transactions-header"></h1>
+                    <h2 class="text-xl mt-2" id="view-transactions-user-name"></h2>
+                </header>
+                <div class="mb-6">
+                    <button type="button" class="btn btn-secondary" onclick="showDashboard()" id="back-to-dashboard-btn-transactions"></button>
+                </div>
+
+                <div class="card mb-6">
+                    <h3 class="text-xl font-semibold mb-4" id="filter-transactions-heading"></h3>
+                    <form id="filter-transactions-form" class="flex flex-wrap items-end space-x-4">
+                        <input type="hidden" id="filter-user-id">
+                        <div class="form-group">
+                            <label for="filter-from-date" class="block text-sm font-medium text-gray-700" id="from-date-label"></label>
+                            <input type="date" id="filter-from-date" name="from_date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-to-date" class="block text-sm font-medium text-gray-700" id="to-date-label"></label>
+                            <input type="date" id="filter-to-date" name="to_date" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="apply-filter-btn"></button>
+                        <button type="button" class="btn btn-secondary" onclick="clearTransactionFilter()" id="clear-filter-btn"></button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4" id="transaction-history-heading"></h3>
+                    <div class="table-container">
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th id="date-th"></th>
+                                    <th id="type-th"></th>
+                                    <th id="amount-th"></th>
+                                    <th id="is-cash-payment-th"></th>
+                                    <th id="is-paid-th"></th>
+                                    <th id="loan-id-th"></th>
+                                    <th id="new-loan-interest-rate-th"></th>
+                                    <th id="description-th"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-data-tbody">
+                                </tbody>
+                        </table>
+                    </div>
+                    <div id="no-transactions-found" class="text-gray-600 mt-4" style="display: none;"></div>
+                    <button type="button" class="btn btn-secondary mt-4" onclick="downloadTransactionsCsv()" id="download-transactions-csv-btn"></button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div id="addGroupModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('addGroupModal')">&times;</span>
+            <h2 class="text-xl font-semibold mb-4" id="add-group-modal-heading"></h2>
+            <form id="add-group-form" class="space-y-4">
+                <div class="form-group">
+                    <label for="group_name" id="group-name-label"></label>
+                    <input type="text" id="group_name" name="group_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="bank_account_details" id="bank-account-details-label"></label>
+                    <textarea id="bank_account_details" name="bank_account_details" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="default_interest_rate" id="default-interest-rate-label"></label>
+                    <input type="number" step="0.01" id="default_interest_rate" name="default_interest_rate" class="form-control" value="12.0" required>
+                </div>
+                <div class="form-group">
+                    <label for="bank_interest_rate" id="bank-interest-rate-label"></label>
+                    <input type="number" step="0.01" id="bank_interest_rate" name="bank_interest_rate" class="form-control" value="3.0" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="add-group-submit-btn"></button>
+            </form>
+        </div>
+    </div>
+
+    <div id="updateBankRateModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('updateBankRateModal')">&times;</span>
+            <h2 class="text-xl font-semibold mb-4" id="edit-bank-interest-rate-modal-heading"></h2>
+            <form id="update-bank-rate-form" class="space-y-4">
+                <div class="form-group">
+                    <label for="new_bank_interest_rate" id="new-interest-rate-label"></label>
+                    <input type="number" step="0.01" id="new_bank_interest_rate" name="new_bank_interest_rate" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="update-bank-rate-submit-btn"></button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('addUserModal')">&times;</span>
+            <h2 class="text-xl font-semibold mb-4" id="add-new-user-modal-heading"></h2>
+            <form id="add-user-form" class="space-y-4">
+                <div class="form-group">
+                    <label for="user_name_input" id="user-name-input-label"></label>
+                    <input type="text" id="user_name_input" name="user_name" class="form-control" required>
+                </div>
+                <div class="form-group flex items-center space-x-2">
+                    <input type="checkbox" id="is_admin" name="is_admin" class="form-checkbox h-4 w-4 text-green-600">
+                    <label for="is_admin" class="text-gray-700" id="is-admin-label"></label>
+                </div>
+                <button type="submit" class="btn btn-primary" id="add-user-submit-btn"></button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addContributionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('addContributionModal')">&times;</span>
+            <h2 class="text-xl font-semibold mb-4" id="add-contribution-modal-heading"></h2>
+            <form id="add-contribution-form" class="space-y-4">
+                <div class="form-group">
+                    <label for="user_id_contribution" id="user-name-contribution-label"></label>
+                    <select id="user_id_contribution" name="user_id" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="amount_contribution" id="amount-label-contribution"></label>
+                    <input type="number" step="0.01" id="amount_contribution" name="amount" class="form-control" required>
+                </div>
+                <div class="form-group flex items-center space-x-2">
+                    <input type="checkbox" id="is_cash_payment_contribution" name="is_cash_payment" class="form-checkbox h-4 w-4 text-green-600">
+                    <label for="is_cash_payment_contribution" class="text-gray-700" id="is-cash-payment-label-contribution"></label>
+                </div>
+                <button type="submit" class="btn btn-primary" id="add-contribution-submit-btn"></button>
+            </form>
+        </div>
+    </div>
+
+    <div id="markPaidModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('markPaidModal')">&times;</span>
+            <h2 class="text-xl font-semibold mb-4" id="mark-paid-modal-heading"></h2>
+            <form id="markPaidForm" class="space-y-4">
+                <input type="hidden" id="mark-paid-transaction-id">
+                <p id="mark-paid-confirmation-text"></p>
+                <button type="submit" class="btn btn-primary" id="mark-paid-submit-btn"></button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addLoanModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('addLoanModal')">&times;</span>
+            <h2 class="text-xl font-semibold mb-4" id="add-new-loan-modal-heading"></h2>
+            <form id="add-loan-form" class="space-y-4">
+                <div class="form-group">
+                    <label for="user_id_loan" id="user-name-loan-label"></label>
+                    <select id="user_id_loan" name="user_id" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="loan_amount" id="loan-amount-label"></label>
+                    <input type="number" step="0.01" id="loan_amount" name="loan_amount" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="loan_issue_date" id="loan-issue-date-label"></label>
+                    <input type="date" id="loan_issue_date" name="loan_issue_date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="loan_interest_rate" id="loan-interest-rate-label"></label>
+                    <input type="number" step="0.01" id="loan_interest_rate" name="loan_interest_rate" class="form-control" value="12.0" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="add-loan-submit-btn"></button>
+            </form>
+        </div>
+    </div>
+
+    <div id="repayLoanModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('repayLoanModal')">&times;</span>
+            <h2 class="text-xl font-semibold mb-4" id="repay-loan-modal-heading"></h2>
+            <form id="repay-loan-form" class="space-y-4">
+                <input type="hidden" id="repay_loan_id">
+                <p><b id="loan-id-display-label"></b> <span id="display_repay_loan_id"></span></p>
+                <p><b id="outstanding-balance-display-label"></b> ₹<span id="display_outstanding_balance"></span></p>
+                <p><b id="current-interest-rate-display-label"></b> <span id="display_current_interest_rate"></span>%</p>
+                <p><b id="last-interest-calc-date-display-label"></b> <span id="display_last_interest_calc_date"></span></p>
+                
+                <div class="form-group">
+                    <label for="repayment_amount" id="repayment-amount-label"></label>
+                    <input type="number" step="0.01" id="repayment_amount" name="repayment_amount" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="repay-loan-submit-btn"></button>
+            </form>
+        </div>
+    </div>
+
+    <div id="changeInterestRateModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('changeInterestRateModal')">&times;</span>
+            <h2 class="text-xl font-semibold mb-4" id="change-interest-rate-modal-heading"></h2>
+            <form id="change-interest-rate-form" class="space-y-4">
+                <input type="hidden" id="change_rate_loan_id">
+                <p><b id="loan-id-change-rate-label"></b> <span id="display_change_rate_loan_id"></span></p>
+                <p><b id="current-rate-change-rate-label"></b> <span id="display_old_interest_rate"></span>%</p>
+                <div class="form-group">
+                    <label for="new_interest_rate_input" id="new-interest-rate-input-label"></label>
+                    <input type="number" step="0.01" id="new_interest_rate_input" name="new_interest_rate" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="change-interest-rate-submit-btn"></button>
+            </form>
+        </div>
+    </div>
+
+    <div id="updateBankRateModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('updateBankRateModal')">&times;</span>
+            <h2 class="text-xl font-semibold mb-4" id="edit-bank-interest-rate-modal-heading-2"></h2>
+            <form id="update-bank-rate-form-2" class="space-y-4">
+                <div class="form-group">
+                    <label for="new_bank_interest_rate_input_2" id="new-interest-rate-label-2"></label>
+                    <input type="number" step="0.01" id="new_bank_interest_rate_input_2" name="new_bank_interest_rate" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="update-bank-rate-submit-btn-2"></button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // --- IndexedDB Setup ---
+        const DB_NAME = 'bachatgatDB';
+        const DB_VERSION = 1;
+        let db;
+        let currentUserRole = null; // 'admin' or 'guest'
+
+        const MARATHI_LABELS = {
+            'app_name': 'अष्टशील महिला बचत गट',
+            'select_group': 'गट निवडा',
+            'add_group': 'नवीन गट जोडा',
+            'group_name': 'गटाचे नाव',
+            'bank_account_details': 'बँक खात्याचा तपशील',
+            'default_interest_rate': 'कर्जावरील पूर्वनिर्धारित व्याज दर (%)',
+            'add': 'जोडा',
+            'group_financial_summary': 'गटाचा आर्थिक सारांश',
+            'overall_summary': 'एकूण नफा',
+            'total_contributions': 'एकूण योगदान',
+            'total_loans_disbursed': 'वितरित एकूण कर्ज',
+            'total_loan_repayments': 'एकूण कर्ज परतफेड',
+            'total_interest_received': 'मिळालेले एकूण व्याज',
+            'overall_profit': 'एकूण नफा',
+            'monthly_profit': 'मासिक नफा (या महिन्याचा)',
+            'yearly_profit': 'वार्षिक नफा (या वर्षाचा)',
+            'monthly_investment': 'मासिक गुंतवणूक (या महिन्याची)',
+            'yearly_investment': 'वार्षिक गुंतवणूक (या वर्षाची)',
+            'group_profit_label': 'गट नफा',
+            'users_and_loans_summary': 'सदस्य आणि कर्जाचा सारांश',
+            'user_name': 'सदस्य नाव',
+            'loan_amount_outstanding': 'थकबाकी कर्ज रक्कम',
+            'interest_paid': 'व्याज भरले',
+            'remaining_loan_amount_with_interest': 'व्याजसह उर्वरित कर्ज रक्कम',
+            'monthly_contribution_status': 'मासिक योगदान स्थिती',
+            'active': 'सक्रिय',
+            'inactive': 'निष्क्रिय',
+            'add_new_user': 'नवीन सदस्य जोडा',
+            'user_name_input': 'सदस्य नाव',
+            'is_admin': 'प्रशासक आहे का?',
+            'toggle_status': 'स्थिती बदला',
+            'add_contribution': 'योगदान जोडा',
+            'amount': 'रक्कम',
+            'is_cash_payment': 'रोख भरणा आहे का?',
+            'mark_paid': 'भरणा झाला म्हणून चिन्हांकित करा',
+            'add_new_loan': 'नवीन कर्ज जोडा',
+            'loan_amount': 'कर्ज रक्कम',
+            'loan_issue_date': 'कर्ज दिल्याची तारीख',
+            'loan_interest_rate': 'कर्जावरील व्याज दर (%)',
+            'repay_loan': 'कर्ज परतफेड करा',
+            'repayment_amount': 'परतफेड रक्कम',
+            'change_interest_rate': 'व्याज दर बदला',
+            'new_interest_rate': 'नवीन व्याज दर (%)',
+            'loan_id': 'कर्ज आयडी',
+            'status_active': 'सक्रिय',
+            'status_paid_off': 'कर्ज फेडले',
+            'status_pending_cash_payment': 'रोख भरणा बाकी',
+            'bulk_upload_transactions': 'बल्क व्यवहार अपलोड करा',
+            'bulk_upload_users': 'बल्क सदस्य अपलोड करा',
+            'download_sample_transactions': 'व्यवहार नमुना CSV डाउनलोड करा',
+            'download_sample_users': 'सदस्य नमुना CSV डाउनलोड करा',
+            'choose_csv_file': 'CSV फाइल निवडा',
+            'upload': 'अपलोड करा',
+            'no_file_part': 'फाइलचा भाग नाही',
+            'no_selected_file': 'कोणतीही फाइल निवडली नाही',
+            'invalid_file_type': 'चुकीचा फाइल प्रकार. कृपया CSV फाइल अपलोड करा.',
+            'upload_complete': 'बल्क अपलोड पूर्ण झाले. {processed_count} व्यवहार यशस्वीरित्या प्रक्रिया केले, {error_count} त्रुटी.',
+            'upload_error': 'बल्क अपलोड दरम्यान त्रुटी: {error}',
+            'user_not_found_in_group': "गट '{group_name}' मध्ये सदस्य '{user_name}' सापडला नाही.",
+            'unknown_transaction_type': "अज्ञात व्यवहार प्रकार '{transaction_type}'",
+            'data_conversion_error': "डेटा रूपांतरण त्रुटी: {error}",
+            'error_processing_row': "पंक्ती प्रक्रिया करताना त्रुटी: {error}",
+            'loan_id_missing': "कर्ज परतफेडीसाठी 'loan_id' आवश्यक आहे.",
+            'loan_not_found': "कर्ज आयडी {loan_id} या सदस्यासाठी या गटात सापडला नाही.",
+            'loan_already_paid_off': "हे कर्ज आधीच फेडले गेले आहे.",
+            'loan_id_not_for_new_loan': "'loan_disbursement' साठी 'loan_id' देऊ नये.",
+            'invalid_interest_rate': "नवीन कर्जासाठी व्याज दर '{rate}' अवैध आहे. तो 0 आणि 100 च्या दरम्यान असावा.",
+            'group_added_success': 'गट यशस्वीरित्या जोडला!',
+            'group_exists_error': 'त्रुटी: या नावाने गट आधीच अस्तित्वात आहे.',
+            'interest_rate_number_error': 'त्रुटी: पूर्वनिर्धारित व्याज दर एक संख्या असणे आवश्यक आहे.',
+            'error_adding_group': 'गट जोडताना त्रुटी: {error}',
+            'user_added_success': 'सदस्य "{name}" यशस्वीरित्या जोडला!',
+            'error_adding_user': 'सदस्य जोडताना त्रुटी: {error}',
+            'unauthorized_access': 'अनधिकृत प्रवेश.', // Not directly applicable in client-side, but kept for consistency
+            'user_status_changed': 'सदस्य स्थिती "{status}" मध्ये बदलली.',
+            'user_not_found': 'सदस्य सापडला नाही.',
+            'contribution_added_success': '₹{amount:.2f} चे योगदान {user_name} साठी जोडले. स्थिती: {status}.',
+            'pending_cash_payment': 'रोख भरणा बाकी',
+            'paid_upi_bank': 'भरले (UPI/बँक)',
+            'error_adding_contribution': 'योगदान जोडताना त्रुटी: {error}',
+            'cash_payment_marked_paid': 'रोख भरणा भरले म्हणून चिन्हांकित केला.',
+            'payment_already_paid': 'भरणा आधीच भरले म्हणून चिन्हांकित केला आहे.',
+            'transaction_not_found': 'व्यवहार सापडला नाही किंवा प्रलंबित रोख भरणा नाही.',
+            'invalid_user_or_group': 'अवैध सदस्य आयडी किंवा सदस्य निर्दिष्ट गटाशी संबंधित नाही.',
+            'invalid_group_id': 'अवैध गट आयडी.',
+            'loan_amount_positive_error': 'कर्ज रक्कम सकारात्मक असणे आवश्यक आहे.',
+            'interest_rate_range_error': 'व्याज दर 0 आणि 100 च्या दरम्यान असणे आवश्यक आहे.',
+            'loan_disbursed_success': 'कर्ज आयडी {loan_id} ची ₹{amount:.2f} रक्कम {user_name} ला {rate}% वार्षिक व्याजाने वितरित केली.',
+            'input_error': 'इनपुट त्रुटी: {error}',
+            'error_adding_loan': 'कर्ज जोडताना त्रुटी: {error}',
+            'loan_rate_changed_success': 'कर्ज आयडी {loan_id} साठी व्याज दर {old_rate}% वरून {new_rate}% मध्ये बदलला.',
+            'error_changing_loan_rate': 'व्याज दर बदलताना त्रुटी: {error}',
+            'repayment_amount_positive_error': 'परतफेड रक्कम सकारात्मक असणे आवश्यक आहे.',
+            'loan_repayment_processed_success': 'कर्ज परतफेड ₹{repayment_amount:.2f} कर्ज आयडी {loan_id} साठी प्रक्रिया केली. '
+                                                + 'मूळ रक्कम ₹{actual_principal_repaid:.2f} नी कमी झाली, व्याजाचा भाग: ₹{interest_paid_amount:.2f}. '
+                                                + 'उर्वरित शिल्लक: ₹{new_outstanding_balance:.2f}.',
+            'loan_fully_paid_off': 'कर्ज आयडी {loan_id} पूर्णपणे फेडले गेले आहे!',
+            'error_repaying_loan': 'कर्ज परतफेड प्रक्रिया करताना त्रुटी: {error}',
+            'user_exists_in_group': "पंक्ती {row_num}: सदस्य '{user_name}' गट आयडी {target_group_id} मध्ये आधीच अस्तित्वात आहे.",
+            'user_added_to_group': "पंक्ती {row_num}: सदस्य '{user_name}' गट आयडी {target_group_id} मध्ये जोडला.",
+            'group_not_found': "पंक्ती {row_num}: गट '{group_identifier}' सापडला नाही.",
+            'missing_user_or_group': "पंक्ती {row_num}: पंक्ती वगळत आहे: 'user_name' किंवा 'group_id'/'group_name' गहाळ आहे.",
+            'confirm_duplicates_title': 'दुबार व्यवहार आढळले', // Not used in client-side
+            'confirm_duplicates_message': 'या फाइलमध्ये एकाच सदस्यासाठी एकापेक्षा जास्त व्यवहार (योगदान किंवा परतफेड) आहेत. तुम्हाला हे व्यवहार स्वीकारायचे आहेत का?', // Not used in client-side
+            'duplicate_details': 'दुबार व्यवहाराचा तपशील:', // Not used in client-side
+            'transaction_type': 'व्यवहाराचा प्रकार',
+            'transaction_amount': 'रक्कम',
+            'transaction_date': 'तारीख',
+            'accept_all_duplicates': 'सर्व दुबार व्यवहार स्वीकारा', // Not used in client-side
+            'reject_duplicates': 'दुबार व्यवहार नाकारा', // Not used in client-side
+            'duplicate_transactions_rejected': 'दुबार व्यवहार नाकारले गेले. कोणतीही नवीन व्यवहार जोडली नाही.', // Not used in client-side
+            'processing_duplicates_accepted': 'दुबार व्यवहार स्वीकारले गेले. प्रक्रिया सुरू आहे...', // Not used in client-side
+            'processing_duplicates_rejected': 'दुबार व्यवहार नाकारले गेले.', // Not used in client-side
+            'please_select_group': 'कृपया गट निवडा',
+            'view_all_transactions': 'सर्व व्यवहार पहा',
+            'back_to_summary': 'सारांशाकडे परत',
+            'filter_transactions': 'व्यवहार फिल्टर करा',
+            'from_date': 'पासूनची तारीख',
+            'to_date': 'पर्यंतची तारीख',
+            'filter': 'फिल्टर करा',
+            'all_transactions_for': '{user_name} चे सर्व व्यवहार',
+            'description': 'वर्णन',
+            'download_transactions_csv': 'व्यवहार CSV डाउनलोड करा',
+            'download_users_csv': 'सदस्य CSV डाउनलोड करा',
+            'total_transactions': 'एकूण व्यवहार',
+            'total_loans': 'एकूण कर्ज',
+            'current_loan_status': 'चालू कर्ज स्थिती',
+            'original_amount': 'मूळ रक्कम',
+            'outstanding_balance': 'थकबाकी शिल्लक',
+            'interest_rate': 'व्याज दर',
+            'issue_date': 'दिलेली तारीख',
+            'last_interest_calc_date': 'शेवटची व्याज गणना तारीख',
+            'status': 'स्थिती',
+            'view_details': 'तपशील पहा',
+            'total_pending_cash_payments': 'प्रलंबित रोख भरणा',
+            'total_contribution_by_user': 'एकूण योगदान',
+            'pending_contribution_by_user': 'प्रलंबित योगदान',
+            'total_loans_disbursed_to_user': 'एकूण वितरित कर्ज',
+            'pending_loan_amount_with_interest': 'प्रलंबित कर्ज (व्याजासह)',
+            'users_with_active_loans': 'सक्रिय कर्ज असलेले सदस्य',
+            'users_without_active_loans': 'सक्रिय कर्ज नसलेले सदस्य',
+            'total_amount_paid_by_user_till_date': 'सदस्याने आजपर्यंत भरलेली एकूण रक्कम',
+            'bank_interest_rate': 'बँक व्याज दर',
+            'saving_account_balance': 'बचत खाते शिल्लक',
+            'edit_bank_interest_rate': 'बँक व्याज दर संपादित करा',
+            'update': 'अद्यतनित करा',
+            'bank_interest_rate_updated_success': 'बँक व्याज दर यशस्वीरित्या अद्यतनित केला.',
+            'error_updating_bank_interest_rate': 'बँक व्याज दर अद्यतनित करताना त्रुटी: {error}',
+            'all_users_summary': 'सर्व सदस्यांचा सारांश',
+            'view_all_groups_report': 'सर्व गटांचा अहवाल पहा',
+            'all_groups_report': 'सर्व गटांचा अहवाल',
+            'group_name_report': 'गटाचे नाव',
+            'pending_contributions_report': 'प्रलंबित योगदान',
+            'total_outstanding_loans_report': 'एकूण थकबाकी कर्ज',
+            'total_paid_contributions_report': 'एकूण भरलेले योगदान',
+            'monthly_repayment_status_report': 'मासिक परतफेड स्थिती',
+            'loans_due_this_month': 'या महिन्यात देय कर्जे',
+            'loans_repaid_this_month': 'या महिन्यात परतफेड केलेली कर्जे',
+            'yes': 'होय',
+            'no': 'नाही',
+            'paid': 'भरले',
+            'apply_filter': 'फिल्टर लागू करा',
+            'clear_filter': 'फिल्टर साफ करा',
+            'transaction_history': 'व्यवहार इतिहास',
+            'no_transactions_found': 'कोणतेही व्यवहार आढळले नाहीत.',
+            'loan_details': 'कर्जाचा तपशील',
+            'no_active_loans': 'सक्रिय कर्ज नाही',
+            'actions': 'क्रिया',
+            'login_success_admin': 'प्रशासक म्हणून यशस्वीरित्या लॉग इन केले!',
+            'login_success_guest': 'अतिथी म्हणून यशस्वीरित्या लॉग इन केले!',
+            'login_failed': 'अवैध वापरकर्तानाव किंवा पासवर्ड.',
+            'logout_success': 'यशस्वीरित्या लॉग आउट केले.',
+            'logged_in_as': 'म्हणून लॉग इन केले आहे: {role}',
+            'not_logged_in': 'लॉग इन केलेले नाही'
+        };
+
+        function getMarathiLabel(key, replacements = {}) {
+            let label = MARATHI_LABELS[key] || key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+            for (const rKey in replacements) {
+                label = label.replace(`{${rKey}}`, replacements[rKey]);
+            }
+            return label;
+        }
+
+        function flashMessage(message, category) {
+            const flashDiv = document.getElementById('flash-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flash-message flash-${category}`;
+            messageDiv.textContent = message;
+            flashDiv.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // --- IndexedDB Functions ---
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains('groups')) {
+                        db.createObjectStore('groups', { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!db.objectStoreNames.contains('users')) {
+                        db.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
+                        const usersStore = request.transaction.objectStore('users');
+                        usersStore.createIndex('group_id', 'group_id', { unique: false });
+                        usersStore.createIndex('group_id_name', ['group_id', 'name'], { unique: true });
+                    }
+                    if (!db.objectStoreNames.contains('transactions')) {
+                        db.createObjectStore('transactions', { keyPath: 'id', autoIncrement: true });
+                        const transactionsStore = request.transaction.objectStore('transactions');
+                        transactionsStore.createIndex('user_id', 'user_id', { unique: false });
+                        transactionsStore.createIndex('group_id', 'group_id', { unique: false });
+                        transactionsStore.createIndex('loan_id', 'loan_id', { unique: false });
+                        transactionsStore.createIndex('user_id_type_date', ['user_id', 'type', 'date'], { unique: false }); // For monthly contribution check
+                    }
+                    if (!db.objectStoreNames.contains('loans')) {
+                        db.createObjectStore('loans', { keyPath: 'id', autoIncrement: true });
+                        const loansStore = request.transaction.objectStore('loans');
+                        loansStore.createIndex('user_id', 'user_id', { unique: false });
+                        loansStore.createIndex('group_id', 'group_id', { unique: false });
+                        loansStore.createIndex('user_id_group_id', ['user_id', 'group_id'], { unique: false });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+
+                request.onerror = (event) => {
+                    console.error('IndexedDB error:', event.target.errorCode);
+                    flashMessage('IndexedDB initialization failed!', 'danger');
+                    reject(event.target.errorCode);
+                };
+            });
+        }
+
+        async function addData(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.add(data);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+
+        async function getAllData(storeName, index = null, range = null) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                let request;
+
+                if (index && range) {
+                    request = store.index(index).openCursor(range);
+                } else if (index) {
+                    request = store.index(index).openCursor();
+                } else {
+                    request = store.openCursor();
+                }
+
+                const data = [];
+                request.onsuccess = (event) => {
+                    const cursor = event.target.result;
+                    if (cursor) {
+                        data.push(cursor.value);
+                        cursor.continue();
+                    } else {
+                        resolve(data);
+                    }
+                };
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+
+        async function getDataById(storeName, id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.get(id);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+
+        async function updateData(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.put(data);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+
+        async function deleteData(storeName, id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+
+        // --- Helper Functions (Client-Side Logic) ---
+        function calculateInterestDue(principal, annual_interest_rate_percent, start_date_str, end_date_str) {
+            if (!principal || principal <= 0) {
+                return 0.0;
+            }
+
+            try {
+                const startDate = new Date(start_date_str);
+                const endDate = new Date(end_date_str);
+
+                if (endDate < startDate) {
+                    return 0.0;
+                }
+
+                const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
+                const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                const annualInterestRateDecimal = annual_interest_rate_percent / 100.0;
+                const dailyInterestRate = annualInterestRateDecimal / 365.0;
+
+                const interest = principal * dailyInterestRate * days;
+                return parseFloat(interest.toFixed(2));
+            } catch (e) {
+                console.error("Error calculating interest:", e);
+                return 0.0;
+            }
+        }
+
+        async function calculateContributionStatus(userId, groupId, targetDateStr = null) {
+            const today = new Date();
+            const targetMonth = targetDateStr ? new Date(targetDateStr).toISOString().slice(0, 7) : today.toISOString().slice(0, 7);
+
+            const transactions = await getAllData('transactions');
+            const userContributions = transactions.filter(t =>
+                t.user_id === userId &&
+                t.group_id === groupId &&
+                t.type === 'contribution' &&
+                t.is_paid === 1 &&
+                t.date.startsWith(targetMonth)
+            );
+            return userContributions.length > 0 ? 'received' : 'not_received';
+        }
+
+        async function getGroupFinancialSummaryReports(groupId) {
+            const group = await getDataById('groups', groupId);
+            const groupCurrentProfit = group ? group.group_profit : 0.0;
+            const groupBankInterestRate = group && group.bank_interest_rate !== undefined ? group.bank_interest_rate : 3.0;
+
+            const transactions = await getAllData('transactions');
+            const loans = await getAllData('loans');
+
+            const groupTransactions = transactions.filter(t => t.group_id === groupId);
+            const groupLoans = loans.filter(l => l.group_id === groupId);
+
+            const totalContributions = groupTransactions
+                .filter(t => t.type === 'contribution' && t.is_paid === 1)
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            const totalLoansDisbursed = groupTransactions
+                .filter(t => t.type === 'loan_disbursement')
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            const totalLoanRepayments = groupTransactions
+                .filter(t => t.type === 'loan_repayment')
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            const totalInterestReceived = groupTransactions
+                .filter(t => t.type === 'interest_paid')
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            const overallProfit = groupCurrentProfit; // This is directly from group.group_profit
+
+            const currentYear = new Date().getFullYear().toString();
+            const currentMonth = new Date().toISOString().slice(0, 7);
+
+            const monthlyProfit = groupTransactions
+                .filter(t => t.type === 'interest_paid' && t.date.startsWith(currentMonth))
+                .reduce((sum, t) => sum + t.amount, 0);
+            const yearlyProfit = groupTransactions
+                .filter(t => t.type === 'interest_paid' && t.date.startsWith(currentYear))
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            const monthlyInvestment = groupTransactions
+                .filter(t => t.type === 'contribution' && t.is_paid === 1 && t.date.startsWith(currentMonth))
+                .reduce((sum, t) => sum + t.amount, 0);
+            const yearlyInvestment = groupTransactions
+                .filter(t => t.type === 'contribution' && t.is_paid === 1 && t.date.startsWith(currentYear))
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            const totalPendingCashPayments = groupTransactions
+                .filter(t => t.is_cash_payment === 1 && t.is_paid === 0)
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            // Calculate Saving Account Balance: total money received by the group minus total money disbursed by the group
+            const savingAccountBalance = (totalContributions + totalLoanRepayments + totalInterestReceived) - totalLoansDisbursed;
+
+
+            return {
+                total_contributions: parseFloat(totalContributions.toFixed(2)),
+                total_loans_disbursed: parseFloat(totalLoansDisbursed.toFixed(2)),
+                total_loan_repayments: parseFloat(totalLoanRepayments.toFixed(2)),
+                total_interest_received: parseFloat(totalInterestReceived.toFixed(2)),
+                overall_profit: parseFloat(overallProfit.toFixed(2)),
+                monthly_profit: parseFloat(monthlyProfit.toFixed(2)),
+                yearly_profit: parseFloat(yearlyProfit.toFixed(2)),
+                monthly_investment: parseFloat(monthlyInvestment.toFixed(2)),
+                yearly_investment: parseFloat(yearlyInvestment.toFixed(2)),
+                total_pending_cash_payments: parseFloat(totalPendingCashPayments.toFixed(2)),
+                saving_account_balance: parseFloat(savingAccountBalance.toFixed(2)),
+                bank_interest_rate: groupBankInterestRate
+            };
+        }
+
+        // --- Render Functions ---
+        async function renderGroupSelect() {
+            const groups = await getAllData('groups');
+            const groupSelect = document.getElementById('groupSelect');
+            groupSelect.innerHTML = `<option value="">-- ${getMarathiLabel('select_group')} --</option>`;
+            groups.forEach(group => {
+                const option = document.createElement('option');
+                option.value = group.id;
+                option.textContent = group.name;
+                groupSelect.appendChild(option);
+            });
+
+            const selectedGroupId = localStorage.getItem('selectedGroupId');
+            if (selectedGroupId) {
+                groupSelect.value = selectedGroupId;
+                await renderDashboard(parseInt(selectedGroupId));
+            } else {
+                document.getElementById('dashboard-content').style.display = 'none';
+                document.getElementById('all-groups-report-content').style.display = 'none';
+                document.getElementById('view-transactions-content').style.display = 'none';
+                document.getElementById('select-group-heading').textContent = getMarathiLabel('select_group');
+                document.getElementById('add-group-btn').textContent = getMarathiLabel('add_group');
+                document.getElementById('view-all-groups-report-btn').textContent = getMarathiLabel('view_all_groups_report');
+            }
+        }
+
+        async function renderDashboard(selectedGroupId) {
+            if (!selectedGroupId) {
+                document.getElementById('dashboard-content').style.display = 'none';
+                document.getElementById('all-groups-report-content').style.display = 'none';
+                document.getElementById('view-transactions-content').style.display = 'none';
+                flashMessage(getMarathiLabel('please_select_group'), 'info');
+                return;
+            }
+
+            localStorage.setItem('selectedGroupId', selectedGroupId);
+            document.getElementById('dashboard-content').style.display = 'block';
+            document.getElementById('all-groups-report-content').style.display = 'none';
+            document.getElementById('view-transactions-content').style.display = 'none';
+
+            const group = await getDataById('groups', selectedGroupId);
+            if (!group) {
+                flashMessage(getMarathiLabel('group_not_found', { group_identifier: selectedGroupId }), 'danger');
+                return;
+            }
+
+            // Update static labels
+            document.getElementById('app-name-header').textContent = getMarathiLabel('app_name');
+            document.getElementById('group-financial-summary-heading').textContent = getMarathiLabel('group_financial_summary');
+            document.getElementById('users-and-loans-summary-heading').textContent = getMarathiLabel('users_and_loans_summary');
+            document.getElementById('add-new-user-btn').textContent = getMarathiLabel('add_new_user');
+            document.getElementById('add-contribution-btn').textContent = getMarathiLabel('add_contribution');
+            document.getElementById('add-new-loan-btn').textContent = getMarathiLabel('add_new_loan');
+            document.getElementById('download-users-csv-btn').textContent = getMarathiLabel('download_users_csv');
+            document.getElementById('user-name-th').textContent = getMarathiLabel('user_name');
+            document.getElementById('monthly-contribution-status-th').textContent = getMarathiLabel('monthly_contribution_status');
+            document.getElementById('total-contribution-by-user-th').textContent = getMarathiLabel('total_contribution_by_user');
+            document.getElementById('pending-contribution-by-user-th').textContent = getMarathiLabel('pending_contribution_by_user');
+            document.getElementById('pending-loan-amount-with-interest-th').textContent = getMarathiLabel('pending_loan_amount_with_interest');
+            document.getElementById('total-amount-paid-by-user-till-date-th').textContent = getMarathiLabel('total_amount_paid_by_user_till_date');
+            document.getElementById('loan-details-th').textContent = getMarathiLabel('loan_details');
+            document.getElementById('actions-th').textContent = getMarathiLabel('actions');
+            document.getElementById('csv-bulk-uploads-heading').textContent = "CSV Bulk Uploads"; // No Marathi label provided for this
+            document.getElementById('bulk-upload-transactions-heading').textContent = getMarathiLabel('bulk_upload_transactions');
+            document.getElementById('choose-csv-file-transactions-label').textContent = getMarathiLabel('choose_csv_file');
+            document.getElementById('upload-transactions-btn').textContent = getMarathiLabel('upload');
+            document.getElementById('download-sample-transactions-btn').textContent = getMarathiLabel('download_sample_transactions');
+            document.getElementById('bulk-upload-users-heading').textContent = getMarathiLabel('bulk_upload_users');
+            document.getElementById('choose-csv-file-users-label').textContent = getMarathiLabel('choose_csv_file');
+            document.getElementById('upload-users-btn').textContent = getMarathiLabel('upload');
+            document.getElementById('download-sample-users-btn').textContent = getMarathiLabel('download_sample_users');
+
+
+            // Group Financial Summary
+            const reports = await getGroupFinancialSummaryReports(selectedGroupId);
+            const groupSummaryDiv = document.getElementById('group-summary-reports');
+            groupSummaryDiv.innerHTML = `
+                <div class="report-widget">
+                    <h4>${getMarathiLabel('overall_summary')}</h4>
+                    <p>₹${reports.overall_profit.toFixed(2)}</p>
+                </div>
+                <div class="report-widget">
+                    <h4>${getMarathiLabel('total_contributions')}</h4>
+                    <p>₹${reports.total_contributions.toFixed(2)}</p>
+                </div>
+                <div class="report-widget">
+                    <h4>${getMarathiLabel('total_loans_disbursed')}</h4>
+                    <p>₹${reports.total_loans_disbursed.toFixed(2)}</p>
+                </div>
+                <div class="report-widget">
+                    <h4>${getMarathiLabel('total_loan_repayments')}</h4>
+                    <p>₹${reports.total_loan_repayments.toFixed(2)}</p>
+                </div>
+                <div class="report-widget profit">
+                    <h4>${getMarathiLabel('total_interest_received')}</h4>
+                    <p>₹${reports.total_interest_received.toFixed(2)}</p>
+                </div>
+                <div class="report-widget">
+                    <h4>${getMarathiLabel('monthly_profit')}</h4>
+                    <p>₹${reports.monthly_profit.toFixed(2)}</p>
+                </div>
+                <div class="report-widget">
+                    <h4>${getMarathiLabel('yearly_profit')}</h4>
+                    <p>₹${reports.yearly_profit.toFixed(2)}</p>
+                </div>
+                <div class="report-widget">
+                    <h4>${getMarathiLabel('monthly_investment')}</h4>
+                    <p>₹${reports.monthly_investment.toFixed(2)}</p>
+                </div>
+                <div class="report-widget">
+                    <h4>${getMarathiLabel('yearly_investment')}</h4>
+                    <p>₹${reports.yearly_investment.toFixed(2)}</p>
+                </div>
+                <div class="report-widget loan">
+                    <h4>${getMarathiLabel('total_pending_cash_payments')}</h4>
+                    <p>₹${reports.total_pending_cash_payments.toFixed(2)}</p>
+                </div>
+                <div class="report-widget">
+                    <h4>${getMarathiLabel('saving_account_balance')}</h4>
+                    <p>₹${reports.saving_account_balance.toFixed(2)}</p>
+                </div>
+                <div class="report-widget">
+                    <h4>${getMarathiLabel('bank_interest_rate')}</h4>
+                    <p>${reports.bank_interest_rate.toFixed(2)}%
+                        <button type="button" class="btn btn-info text-xs mt-2 px-2 py-1" onclick="openUpdateBankRateModal(${selectedGroupId}, ${reports.bank_interest_rate})">
+                            ${getMarathiLabel('edit_bank_interest_rate')}
+                        </button>
+                    </p>
+                </div>
+            `;
+
+            // Users and Loans Summary
+            const usersTbody = document.getElementById('users-data-tbody');
+            usersTbody.innerHTML = '';
+            const allUsers = await getAllData('users');
+            const usersInGroup = allUsers.filter(u => u.group_id === selectedGroupId);
+            const allTransactions = await getAllData('transactions');
+            const allLoans = await getAllData('loans');
+
+            // Populate user select dropdowns in modals
+            const userSelectContribution = document.getElementById('user_id_contribution');
+            const userSelectLoan = document.getElementById('user_id_loan');
+            userSelectContribution.innerHTML = `<option value="">-- ${getMarathiLabel('select_group')} --</option>`;
+            userSelectLoan.innerHTML = `<option value="">-- ${getMarathiLabel('select_group')} --</option>`;
+
+
+            for (const user of usersInGroup) {
+                const userTransactions = allTransactions.filter(t => t.user_id === user.id);
+                const userLoans = allLoans.filter(l => l.user_id === user.id);
+
+                const totalContributionsByUser = userTransactions
+                    .filter(t => t.type === 'contribution' && t.is_paid === 1)
+                    .reduce((sum, t) => sum + t.amount, 0);
+
+                const pendingContributionsByUser = userTransactions
+                    .filter(t => t.type === 'contribution' && t.is_cash_payment === 1 && t.is_paid === 0)
+                    .reduce((sum, t) => sum + t.amount, 0);
+
+                const activeLoans = userLoans.filter(l => l.status === 'active');
+                let remainingLoanAmountWithAccruedInterest = 0.0;
+                for (const loan of activeLoans) {
+                    const accruedInterest = calculateInterestDue(
+                        loan.outstanding_balance,
+                        loan.current_interest_rate,
+                        loan.last_interest_calc_date,
+                        new Date().toISOString().slice(0, 10)
+                    );
+                    remainingLoanAmountWithAccruedInterest += loan.outstanding_balance + accruedInterest;
+                }
+
+                const totalLoanRepaymentsByUser = userTransactions
+                    .filter(t => t.type === 'loan_repayment' && t.is_paid === 1)
+                    .reduce((sum, t) => sum + t.amount, 0);
+
+                const totalAmountPaidByUserTillDate = totalContributionsByUser + totalLoanRepaymentsByUser;
+
+                const monthlyContributionStatus = await calculateContributionStatus(user.id, selectedGroupId);
+
+                const row = usersTbody.insertRow();
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>
+                        <span class="${monthlyContributionStatus === 'received' ? 'status-received' : 'status-pending'}">
+                            ${monthlyContributionStatus === 'received' ? 'Received' : 'Not Received'}
+                        </span>
+                    </td>
+                    <td>₹${totalContributionsByUser.toFixed(2)}</td>
+                    <td>₹${pendingContributionsByUser.toFixed(2)}</td>
+                    <td>₹${remainingLoanAmountWithAccruedInterest.toFixed(2)}</td>
+                    <td>₹${totalAmountPaidByUserTillDate.toFixed(2)}</td>
+                    <td>
+                        ${activeLoans.length > 0 ? `
+                            <ul class="list-disc ml-4">
+                                ${activeLoans.map(loan => `
+                                    <li>
+                                        ${getMarathiLabel('loan_id')}: ${loan.id}<br>
+                                        ${getMarathiLabel('original_amount')}: ₹${loan.original_amount.toFixed(2)}<br>
+                                        ${getMarathiLabel('outstanding_balance')}: ₹${loan.outstanding_balance.toFixed(2)}<br>
+                                        ${getMarathiLabel('interest_rate')}: ${loan.current_interest_rate}%<br>
+                                        ${getMarathiLabel('status')}: ${loan.status}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        ` : getMarathiLabel('no_active_loans')}
+                    </td>
+                    <td class="whitespace-nowrap">
+                        <button type="button" class="btn btn-info text-xs py-1 px-2 mb-1" onclick="viewTransactions(${user.id})">
+                            ${getMarathiLabel('view_all_transactions')}
+                        </button><br>
+                        ${pendingContributionsByUser > 0 && currentUserRole === 'admin' ? `
+                            <button type="button" class="btn btn-success text-xs py-1 px-2 mb-1"
+                                    onclick="markCashPaymentPaid(${user.id}, ${selectedGroupId})">
+                                ${getMarathiLabel('mark_paid')}
+                            </button><br>
+                        ` : ''}
+                        ${currentUserRole === 'admin' ? activeLoans.map(loan => `
+                            <button type="button" class="btn btn-info text-xs py-1 px-2 mb-1"
+                                    onclick="openRepayLoanModal(${loan.id}, ${loan.outstanding_balance}, ${loan.current_interest_rate}, '${loan.last_interest_calc_date}')">
+                                ${getMarathiLabel('repay_loan')}
+                            </button><br>
+                            <button type="button" class="btn btn-secondary text-xs py-1 px-2 mb-1"
+                                    onclick="openChangeInterestRateModal(${loan.id}, ${loan.current_interest_rate})">
+                                ${getMarathiLabel('change_interest_rate')}
+                            </button><br>
+                        `).join('') : ''}
+                    </td>
+                `;
+
+                // Populate user select dropdowns
+                const optionContribution = document.createElement('option');
+                optionContribution.value = user.id;
+                optionContribution.textContent = user.name;
+                userSelectContribution.appendChild(optionContribution);
+
+                const optionLoan = document.createElement('option');
+                optionLoan.value = user.id;
+                optionLoan.textContent = user.name;
+                userSelectLoan.appendChild(optionLoan);
+            }
+
+            // Hide/Show admin-only sections
+            if (currentUserRole === 'admin') {
+                document.getElementById('csv-bulk-uploads-section').style.display = 'block';
+                document.getElementById('add-group-btn').style.display = 'inline-block';
+                document.getElementById('add-new-user-btn').style.display = 'inline-block';
+                document.getElementById('add-contribution-btn').style.display = 'inline-block';
+                document.getElementById('add-new-loan-btn').style.display = 'inline-block';
+                document.getElementById('download-users-csv-btn').style.display = 'inline-block';
+            } else {
+                document.getElementById('csv-bulk-uploads-section').style.display = 'none';
+                document.getElementById('add-group-btn').style.display = 'none';
+                document.getElementById('add-new-user-btn').style.display = 'none';
+                document.getElementById('add-contribution-btn').style.display = 'none';
+                document.getElementById('add-new-loan-btn').style.display = 'none';
+                document.getElementById('download-users-csv-btn').style.display = 'none';
+            }
+        }
+
+        async function showAllGroupsReport() {
+            document.getElementById('dashboard-content').style.display = 'none';
+            document.getElementById('view-transactions-content').style.display = 'none';
+            document.getElementById('all-groups-report-content').style.display = 'block';
+
+            document.getElementById('back-to-dashboard-btn-report').textContent = getMarathiLabel('back_to_summary');
+
+            const allGroups = await getAllData('groups');
+            const reportCardsContainer = document.getElementById('all-groups-report-cards');
+            reportCardsContainer.innerHTML = '';
+
+            if (allGroups.length === 0) {
+                reportCardsContainer.innerHTML = `<p class="text-gray-600">${getMarathiLabel('no_groups_found_to_generate_report')}</p>`;
+                return;
+            }
+
+            for (const group of allGroups) {
+                const reports = await getGroupFinancialSummaryReports(group.id);
+                const cardHtml = `
+                    <div class="card">
+                        <h2 class="text-xl font-semibold mb-4">${getMarathiLabel('group_name_report')}: ${group.name}</h2>
+                        <div class="report-grid">
+                            <div class="report-widget profit">
+                                <h4>${getMarathiLabel('overall_profit')}</h4>
+                                <p>₹${reports.overall_profit.toFixed(2)}</p>
+                            </div>
+                            <div class="report-widget balance">
+                                <h4>${getMarathiLabel('saving_account_balance')}</h4>
+                                <p>₹${reports.saving_account_balance.toFixed(2)}</p>
+                            </div>
+                            <div class="report-widget">
+                                <h4>${getMarathiLabel('total_contributions')}</h4>
+                                <p>₹${reports.total_contributions.toFixed(2)}</p>
+                            </div>
+                            <div class="report-widget loan">
+                                <h4>${getMarathiLabel('total_loans_disbursed')}</h4>
+                                <p>₹${reports.total_loans_disbursed.toFixed(2)}</p>
+                            </div>
+                            <div class="report-widget">
+                                <h4>${getMarathiLabel('total_loan_repayments')}</h4>
+                                <p>₹${reports.total_loan_repayments.toFixed(2)}</p>
+                            </div>
+                            <div class="report-widget profit">
+                                <h4>${getMarathiLabel('total_interest_received')}</h4>
+                                <p>₹${reports.total_interest_received.toFixed(2)}</p>
+                            </div>
+                            <div class="report-widget">
+                                <h4>${getMarathiLabel('monthly_profit')}</h4>
+                                <p>₹${reports.monthly_profit.toFixed(2)}</p>
+                            </div>
+                            <div class="report-widget">
+                                <h4>${getMarathiLabel('monthly_investment')}</h4>
+                                <p>₹${reports.monthly_investment.toFixed(2)}</p>
+                            </div>
+                            <div class="report-widget">
+                                <h4>${getMarathiLabel('yearly_profit')}</h4>
+                                <p>₹${reports.yearly_profit.toFixed(2)}</p>
+                            </div>
+                            <div class="report-widget">
+                                <h4>${getMarathiLabel('yearly_investment')}</h4>
+                                <p>₹${reports.yearly_investment.toFixed(2)}</p>
+                            </div>
+                            <div class="report-widget loan">
+                                <h4>${getMarathiLabel('total_pending_cash_payments')}</h4>
+                                <p>₹${reports.total_pending_cash_payments.toFixed(2)}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                reportCardsContainer.insertAdjacentHTML('beforeend', cardHtml);
+            }
+        }
+
+        async function viewTransactions(userId, fromDate = null, toDate = null) {
+            document.getElementById('dashboard-content').style.display = 'none';
+            document.getElementById('all-groups-report-content').style.display = 'none';
+            document.getElementById('view-transactions-content').style.display = 'block';
+
+            const user = await getDataById('users', userId);
+            if (!user) {
+                flashMessage(getMarathiLabel('user_not_found'), 'danger');
+                showDashboard();
+                return;
+            }
+
+            document.getElementById('view-transactions-header').textContent = getMarathiLabel('view_all_transactions');
+            document.getElementById('view-transactions-user-name').textContent = `(${user.name})`;
+            document.getElementById('back-to-dashboard-btn-transactions').textContent = getMarathiLabel('back_to_summary');
+            document.getElementById('filter-transactions-heading').textContent = getMarathiLabel('filter_transactions');
+            document.getElementById('from-date-label').textContent = getMarathiLabel('from_date');
+            document.getElementById('to-date-label').textContent = getMarathiLabel('to_date');
+            document.getElementById('apply-filter-btn').textContent = getMarathiLabel('filter');
+            document.getElementById('clear-filter-btn').textContent = getMarathiLabel('clear_filter');
+            document.getElementById('transaction-history-heading').textContent = getMarathiLabel('transaction_history');
+            document.getElementById('date-th').textContent = getMarathiLabel('date');
+            document.getElementById('type-th').textContent = getMarathiLabel('type');
+            document.getElementById('amount-th').textContent = getMarathiLabel('amount');
+            document.getElementById('is-cash-payment-th').textContent = getMarathiLabel('is_cash_payment');
+            document.getElementById('is-paid-th').textContent = getMarathiLabel('is_paid');
+            document.getElementById('loan-id-th').textContent = getMarathiLabel('loan_id');
+            document.getElementById('new-loan-interest-rate-th').textContent = getMarathiLabel('new_loan_interest_rate');
+            document.getElementById('description-th').textContent = getMarathiLabel('description');
+            document.getElementById('download-transactions-csv-btn').textContent = getMarathiLabel('download_transactions_csv');
+            document.getElementById('no-transactions-found').textContent = getMarathiLabel('no_transactions_found');
+
+
+            document.getElementById('filter-user-id').value = userId;
+            document.getElementById('filter-from-date').value = fromDate || '';
+            document.getElementById('filter-to-date').value = toDate || '';
+
+            const allTransactions = await getAllData('transactions');
+            let userTransactions = allTransactions.filter(t => t.user_id === userId);
+
+            if (fromDate) {
+                userTransactions = userTransactions.filter(t => t.date >= fromDate);
+            }
+            if (toDate) {
+                userTransactions = userTransactions.filter(t => t.date <= toDate);
+            }
+
+            userTransactions.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending
+
+            const transactionsTbody = document.getElementById('transactions-data-tbody');
+            transactionsTbody.innerHTML = '';
+
+            if (userTransactions.length === 0) {
+                document.getElementById('no-transactions-found').style.display = 'block';
+            } else {
+                document.getElementById('no-transactions-found').style.display = 'none';
+                for (const transaction of userTransactions) {
+                    const row = transactionsTbody.insertRow();
+                    const isCashPaymentText = transaction.is_cash_payment ? getMarathiLabel('yes') : getMarathiLabel('no');
+                    let isPaidStatusHtml = getMarathiLabel('not_applicable'); // Default for non-cash or if logic doesn't apply
+
+                    if (transaction.is_cash_payment) {
+                        if (transaction.is_paid) {
+                            isPaidStatusHtml = `<span class="status-paid">${getMarathiLabel('paid')}</span>`;
+                        } else {
+                            isPaidStatusHtml = `
+                                <span class="status-pending">${getMarathiLabel('pending')}</span>
+                                ${currentUserRole === 'admin' ? `
+                                <button type="button" class="btn btn-primary text-xs px-2 py-1 ml-2"
+                                        onclick="markCashPaymentPaid(${transaction.id}, ${user.id})">
+                                    ${getMarathiLabel('mark_paid')}
+                                </button>
+                                ` : ''}
+                            `;
+                        }
+                    }
+
+                    row.innerHTML = `
+                        <td>${transaction.date}</td>
+                        <td>${transaction.type}</td>
+                        <td>${transaction.amount.toFixed(2)}</td>
+                        <td>${isCashPaymentText}</td>
+                        <td>${isPaidStatusHtml}</td>
+                        <td>${transaction.loan_id || '-'}</td>
+                        <td>${transaction.new_loan_interest_rate !== undefined && transaction.new_loan_interest_rate !== null ? transaction.new_loan_interest_rate.toFixed(2) : '-'}</td>
+                        <td>${transaction.description || '-'}</td>
+                    `;
+                }
+            }
+        }
+
+        function showDashboard() {
+            const selectedGroupId = localStorage.getItem('selectedGroupId');
+            if (selectedGroupId) {
+                renderDashboard(parseInt(selectedGroupId));
+            } else {
+                document.getElementById('dashboard-content').style.display = 'none';
+                document.getElementById('all-groups-report-content').style.display = 'none';
+                document.getElementById('view-transactions-content').style.display = 'none';
+            }
+        }
+
+        // --- Authentication Functions ---
+        function checkLoginStatus() {
+            currentUserRole = localStorage.getItem('userRole');
+            const appContent = document.getElementById('app-content');
+            const loginModal = document.getElementById('loginModal');
+            const authStatusDiv = document.getElementById('auth-status');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            if (currentUserRole) {
+                appContent.style.display = 'block';
+                loginModal.style.display = 'none';
+                authStatusDiv.textContent = getMarathiLabel('logged_in_as', { role: currentUserRole });
+                logoutBtn.classList.remove('hidden');
+                renderGroupSelect(); // Render main content after successful login
+            } else {
+                appContent.style.display = 'none';
+                loginModal.style.display = 'block';
+                authStatusDiv.textContent = getMarathiLabel('not_logged_in');
+                logoutBtn.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'admin' && password === 'admin') {
+                localStorage.setItem('userRole', 'admin');
+                flashMessage(getMarathiLabel('login_success_admin'), 'success');
+                checkLoginStatus();
+            } else if (username === 'guest' && password === 'guest') {
+                localStorage.setItem('userRole', 'guest');
+                flashMessage(getMarathiLabel('login_success_guest'), 'success');
+                checkLoginStatus();
+            } else {
+                flashMessage(getMarathiLabel('login_failed'), 'danger');
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('selectedGroupId'); // Clear selected group on logout
+            flashMessage(getMarathiLabel('logout_success'), 'info');
+            checkLoginStatus();
+        });
+
+
+        // --- Event Listeners and Form Submissions ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            await openDB();
+            checkLoginStatus(); // Check login status on page load
+
+            // Initial UI text setup
+            document.getElementById('app-name-header').textContent = getMarathiLabel('app_name');
+            document.getElementById('select-group-heading').textContent = getMarathiLabel('select_group');
+            document.getElementById('add-group-btn').textContent = getMarathiLabel('add_group');
+            document.getElementById('view-all-groups-report-btn').textContent = getMarathiLabel('view_all_groups_report');
+
+            // Modals initial text setup
+            document.getElementById('add-group-modal-heading').textContent = getMarathiLabel('add_group');
+            document.getElementById('group-name-label').textContent = getMarathiLabel('group_name');
+            document.getElementById('bank-account-details-label').textContent = getMarathiLabel('bank_account_details');
+            document.getElementById('default-interest-rate-label').textContent = getMarathiLabel('default_interest_rate');
+            document.getElementById('bank-interest-rate-label').textContent = getMarathiLabel('bank_interest_rate');
+            document.getElementById('add-group-submit-btn').textContent = getMarathiLabel('add');
+
+            document.getElementById('edit-bank-interest-rate-modal-heading').textContent = getMarathiLabel('edit_bank_interest_rate');
+            document.getElementById('new-interest-rate-label').textContent = getMarathiLabel('new_interest_rate');
+            document.getElementById('update-bank-rate-submit-btn').textContent = getMarathiLabel('update');
+
+            document.getElementById('add-new-user-modal-heading').textContent = getMarathiLabel('add_new_user');
+            document.getElementById('user-name-input-label').textContent = getMarathiLabel('user_name');
+            document.getElementById('is-admin-label').textContent = getMarathiLabel('is_admin');
+            document.getElementById('add-user-submit-btn').textContent = getMarathiLabel('add');
+
+            document.getElementById('add-contribution-modal-heading').textContent = getMarathiLabel('add_contribution');
+            document.getElementById('user-name-contribution-label').textContent = getMarathiLabel('user_name');
+            document.getElementById('amount-label-contribution').textContent = getMarathiLabel('amount');
+            document.getElementById('is-cash-payment-label-contribution').textContent = getMarathiLabel('is_cash_payment');
+            document.getElementById('add-contribution-submit-btn').textContent = getMarathiLabel('add');
+
+            document.getElementById('mark-paid-modal-heading').textContent = getMarathiLabel('mark_paid');
+            document.getElementById('mark-paid-confirmation-text').textContent = "Are you sure you want to mark this cash payment as paid?"; // Hardcoded for now
+            document.getElementById('mark-paid-submit-btn').textContent = getMarathiLabel('mark_paid');
+
+            document.getElementById('add-new-loan-modal-heading').textContent = getMarathiLabel('add_new_loan');
+            document.getElementById('user-name-loan-label').textContent = getMarathiLabel('user_name');
+            document.getElementById('loan-amount-label').textContent = getMarathiLabel('loan_amount');
+            document.getElementById('loan-issue-date-label').textContent = getMarathiLabel('loan_issue_date');
+            document.getElementById('loan-interest-rate-label').textContent = getMarathiLabel('loan_interest_rate');
+            document.getElementById('add-loan-submit-btn').textContent = getMarathiLabel('add');
+
+            document.getElementById('repay-loan-modal-heading').textContent = getMarathiLabel('repay_loan');
+            document.getElementById('loan-id-display-label').textContent = getMarathiLabel('loan_id');
+            document.getElementById('outstanding-balance-display-label').textContent = getMarathiLabel('outstanding_balance');
+            document.getElementById('current-interest-rate-display-label').textContent = getMarathiLabel('current_loan_status');
+            document.getElementById('last-interest-calc-date-display-label').textContent = getMarathiLabel('last_interest_calc_date');
+            document.getElementById('repayment-amount-label').textContent = getMarathiLabel('repayment_amount');
+            document.getElementById('repay-loan-submit-btn').textContent = getMarathiLabel('repay_loan');
+
+            document.getElementById('change-interest-rate-modal-heading').textContent = getMarathiLabel('change_interest_rate');
+            document.getElementById('loan-id-change-rate-label').textContent = getMarathiLabel('loan_id');
+            document.getElementById('current-rate-change-rate-label').textContent = getMarathiLabel('current_loan_status');
+            document.getElementById('new-interest-rate-input-label').textContent = getMarathiLabel('new_interest_rate');
+            document.getElementById('change-interest-rate-submit-btn').textContent = getMarathiLabel('update');
+
+            document.getElementById('edit-bank-interest-rate-modal-heading-2').textContent = getMarathiLabel('edit_bank_interest_rate');
+            document.getElementById('new-interest-rate-label-2').textContent = getMarathiLabel('new_interest_rate');
+            document.getElementById('update-bank-rate-submit-btn-2').textContent = getMarathiLabel('update');
+
+            // Set current date for loan issue date
+            document.getElementById('loan_issue_date').value = new Date().toISOString().slice(0, 10);
+        });
+
+        document.getElementById('groupSelect').addEventListener('change', async (event) => {
+            const selectedGroupId = parseInt(event.target.value);
+            if (selectedGroupId) {
+                await renderDashboard(selectedGroupId);
+            } else {
+                localStorage.removeItem('selectedGroupId');
+                document.getElementById('dashboard-content').style.display = 'none';
+                document.getElementById('all-groups-report-content').style.display = 'none';
+                document.getElementById('view-transactions-content').style.display = 'none';
+            }
+        });
+
+        document.getElementById('add-group-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const name = document.getElementById('group_name').value;
+            const bankAccountDetails = document.getElementById('bank_account_details').value;
+            const defaultInterestRate = parseFloat(document.getElementById('default_interest_rate').value);
+            const bankInterestRate = parseFloat(document.getElementById('bank_interest_rate').value);
+
+            if (isNaN(defaultInterestRate) || defaultInterestRate < 0 || defaultInterestRate > 100) {
+                flashMessage(getMarathiLabel('interest_rate_range_error'), 'danger');
+                return;
+            }
+            if (isNaN(bankInterestRate) || bankInterestRate < 0 || bankInterestRate > 100) {
+                flashMessage(getMarathiLabel('interest_rate_range_error'), 'danger');
+                return;
+            }
+
+            const groups = await getAllData('groups');
+            const groupExists = groups.some(g => g.name === name);
+            if (groupExists) {
+                flashMessage(getMarathiLabel('group_exists_error'), 'danger');
+                return;
+            }
+
+            try {
+                await addData('groups', {
+                    name,
+                    bank_account_details: bankAccountDetails,
+                    group_profit: 0.0,
+                    default_interest_rate: defaultInterestRate,
+                    bank_interest_rate: bankInterestRate
+                });
+                flashMessage(getMarathiLabel('group_added_success'), 'success');
+                closeModal('addGroupModal');
+                await renderGroupSelect();
+            } catch (e) {
+                flashMessage(getMarathiLabel('error_adding_group', { error: e.message }), 'danger');
+            }
+        });
+
+        document.getElementById('update-bank-rate-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+            const newBankRate = parseFloat(document.getElementById('new_bank_interest_rate').value);
+
+            if (isNaN(newBankRate) || newBankRate < 0 || newBankRate > 100) {
+                flashMessage(getMarathiLabel('interest_rate_range_error'), 'danger');
+                return;
+            }
+
+            try {
+                const group = await getDataById('groups', selectedGroupId);
+                group.bank_interest_rate = newBankRate;
+                await updateData('groups', group);
+                flashMessage(getMarathiLabel('bank_interest_rate_updated_success'), 'success');
+                closeModal('updateBankRateModal');
+                await renderDashboard(selectedGroupId);
+            } catch (e) {
+                flashMessage(getMarathiLabel('error_updating_bank_interest_rate', { error: e.message }), 'danger');
+            }
+        });
+
+        document.getElementById('update-bank-rate-form-2').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+            const newBankRate = parseFloat(document.getElementById('new_bank_interest_rate_input_2').value);
+
+            if (isNaN(newBankRate) || newBankRate < 0 || newBankRate > 100) {
+                flashMessage(getMarathiLabel('interest_rate_range_error'), 'danger');
+                return;
+            }
+
+            try {
+                const group = await getDataById('groups', selectedGroupId);
+                group.bank_interest_rate = newBankRate;
+                await updateData('groups', group);
+                flashMessage(getMarathiLabel('bank_interest_rate_updated_success'), 'success');
+                closeModal('updateBankRateModal');
+                await renderDashboard(selectedGroupId);
+            } catch (e) {
+                flashMessage(getMarathiLabel('error_updating_bank_interest_rate', { error: e.message }), 'danger');
+            }
+        });
+
+
+        document.getElementById('add-user-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const name = document.getElementById('user_name_input').value;
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+            const isAdmin = document.getElementById('is_admin').checked;
+
+            if (!selectedGroupId) {
+                flashMessage(getMarathiLabel('please_select_group'), 'danger');
+                return;
+            }
+
+            const usersInGroup = (await getAllData('users')).filter(u => u.group_id === selectedGroupId);
+            const userExists = usersInGroup.some(u => u.name === name);
+            if (userExists) {
+                flashMessage(getMarathiLabel('user_exists_in_group', { user_name: name, target_group_id: selectedGroupId }), 'danger');
+                return;
+            }
+
+            try {
+                await addData('users', {
+                    name,
+                    group_id: selectedGroupId,
+                    is_admin: isAdmin ? 1 : 0,
+                    status: 'active'
+                });
+                flashMessage(getMarathiLabel('user_added_success', { name: name }), 'success');
+                closeModal('addUserModal');
+                await renderDashboard(selectedGroupId);
+            } catch (e) {
+                flashMessage(getMarathiLabel('error_adding_user', { error: e.message }), 'danger');
+            }
+        });
+
+        document.getElementById('add-contribution-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const userId = parseInt(document.getElementById('user_id_contribution').value);
+            const amount = parseFloat(document.getElementById('amount_contribution').value);
+            const isCashPayment = document.getElementById('is_cash_payment_contribution').checked;
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+
+            if (isNaN(amount) || amount <= 0) {
+                flashMessage(getMarathiLabel('repayment_amount_positive_error'), 'danger');
+                return;
+            }
+
+            const isPaid = isCashPayment ? 0 : 1; // Cash payments are pending initially
+            const statusMessageKey = isCashPayment ? 'pending_cash_payment' : 'paid_upi_bank';
+
+            try {
+                const user = await getDataById('users', userId);
+                if (!user || user.group_id !== selectedGroupId) {
+                    flashMessage(getMarathiLabel('invalid_user_or_group'), 'danger');
+                    return;
+                }
+
+                await addData('transactions', {
+                    user_id: userId,
+                    group_id: selectedGroupId,
+                    type: 'contribution',
+                    amount: amount,
+                    date: new Date().toISOString().slice(0, 10),
+                    is_cash_payment: isCashPayment ? 1 : 0,
+                    is_paid: isPaid
+                });
+                flashMessage(getMarathiLabel('contribution_added_success', { amount: amount, user_name: user.name, status: getMarathiLabel(statusMessageKey) }), 'success');
+                closeModal('addContributionModal');
+                await renderDashboard(selectedGroupId);
+            } catch (e) {
+                flashMessage(getMarathiLabel('error_adding_contribution', { error: e.message }), 'danger');
+            }
+        });
+
+        async function markCashPaymentPaid(transactionId, userId) {
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+            try {
+                const transaction = await getDataById('transactions', transactionId);
+                if (!transaction || transaction.is_cash_payment !== 1 || transaction.is_paid !== 0) {
+                    flashMessage(getMarathiLabel('transaction_not_found'), 'danger');
+                    return;
+                }
+                transaction.is_paid = 1;
+                await updateData('transactions', transaction);
+                flashMessage(getMarathiLabel('cash_payment_marked_paid'), 'success');
+                await renderDashboard(selectedGroupId);
+                // If on transactions page, re-render it
+                if (document.getElementById('view-transactions-content').style.display === 'block' && document.getElementById('filter-user-id').value == userId) {
+                     await viewTransactions(userId, document.getElementById('filter-from-date').value, document.getElementById('filter-to-date').value);
+                }
+            } catch (e) {
+                flashMessage(`Error marking payment as paid: ${e.message}`, 'danger');
+            }
+        }
+
+        document.getElementById('add-loan-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const userId = parseInt(document.getElementById('user_id_loan').value);
+            const loanAmount = parseFloat(document.getElementById('loan_amount').value);
+            const loanIssueDate = document.getElementById('loan_issue_date').value;
+            const loanInterestRate = parseFloat(document.getElementById('loan_interest_rate').value);
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+
+            if (isNaN(loanAmount) || loanAmount <= 0) {
+                flashMessage(getMarathiLabel('loan_amount_positive_error'), 'danger');
+                return;
+            }
+            if (isNaN(loanInterestRate) || loanInterestRate < 0 || loanInterestRate > 100) {
+                flashMessage(getMarathiLabel('interest_rate_range_error'), 'danger');
+                return;
+            }
+
+            try {
+                const user = await getDataById('users', userId);
+                if (!user || user.group_id !== selectedGroupId) {
+                    flashMessage(getMarathiLabel('invalid_user_or_group'), 'danger');
+                    return;
+                }
+
+                // Add loan
+                const loanId = await addData('loans', {
+                    user_id: userId,
+                    group_id: selectedGroupId,
+                    original_amount: loanAmount,
+                    outstanding_balance: loanAmount,
+                    current_interest_rate: loanInterestRate,
+                    issue_date: loanIssueDate,
+                    last_interest_calc_date: loanIssueDate,
+                    status: 'active'
+                });
+
+                // Add transaction for loan disbursement
+                await addData('transactions', {
+                    user_id: user.id,
+                    group_id: selectedGroupId,
+                    loan_id: loanId,
+                    type: 'loan_disbursement',
+                    amount: loanAmount,
+                    date: loanIssueDate,
+                    description: `Loan disbursement for ${user.name}`,
+                    is_cash_payment: 0,
+                    is_paid: 1
+                });
+
+                flashMessage(getMarathiLabel('loan_disbursed_success', { loan_id: loanId, amount: loanAmount, user_name: user.name, rate: loanInterestRate }), 'success');
+                closeModal('addLoanModal');
+                await renderDashboard(selectedGroupId);
+            } catch (e) {
+                flashMessage(getMarathiLabel('error_adding_loan', { error: e.message }), 'danger');
+            }
+        });
+
+        function openRepayLoanModal(loanId, outstandingBalance, currentInterestRate, lastInterestCalcDate) {
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            document.getElementById('repay_loan_id').value = loanId;
+            document.getElementById('display_repay_loan_id').innerText = loanId;
+            document.getElementById('display_outstanding_balance').innerText = parseFloat(outstandingBalance).toFixed(2);
+            document.getElementById('display_current_interest_rate').innerText = parseFloat(currentInterestRate).toFixed(2);
+            document.getElementById('display_last_interest_calc_date').innerText = lastInterestCalcDate;
+            openModal('repayLoanModal');
+        }
+
+        document.getElementById('repay-loan-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const loanId = parseInt(document.getElementById('repay_loan_id').value);
+            const repaymentAmount = parseFloat(document.getElementById('repayment_amount').value);
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+
+            if (isNaN(repaymentAmount) || repaymentAmount <= 0) {
+                flashMessage(getMarathiLabel('repayment_amount_positive_error'), 'danger');
+                return;
+            }
+
+            try {
+                const loan = await getDataById('loans', loanId);
+                if (!loan || loan.group_id !== selectedGroupId) {
+                    flashMessage(getMarathiLabel('loan_not_found', { loan_id: loanId }), 'danger');
+                    return;
+                }
+                if (loan.status === 'paid_off') {
+                    flashMessage(getMarathiLabel('loan_already_paid_off'), 'info');
+                    return;
+                }
+
+                const outstandingBalance = loan.outstanding_balance;
+                const currentInterestRate = loan.current_interest_rate;
+                const lastInterestCalcDateStr = loan.last_interest_calc_date;
+                const userId = loan.user_id;
+                const today = new Date().toISOString().slice(0, 10);
+
+                const interestAccruedToday = calculateInterestDue(
+                    outstandingBalance,
+                    currentInterestRate,
+                    lastInterestCalcDateStr,
+                    today
+                );
+
+                let interestPaidAmount = Math.min(repaymentAmount, interestAccruedToday);
+                let principalRepaidAmount = repaymentAmount - interestPaidAmount;
+                let newOutstandingBalance = outstandingBalance - principalRepaidAmount;
+
+                // Ensure outstanding balance doesn't go below zero
+                if (newOutstandingBalance < 0) {
+                    principalRepaidAmount += newOutstandingBalance; // Reduce principal repaid to make newOutstandingBalance 0
+                    newOutstandingBalance = 0;
+                }
+
+                // Update loan
+                loan.outstanding_balance = newOutstandingBalance;
+                loan.last_interest_calc_date = today;
+                if (newOutstandingBalance <= 0) {
+                    loan.status = 'paid_off';
+                    loan.outstanding_balance = 0; // Ensure it's exactly 0
+                }
+                await updateData('loans', loan);
+
+                // Record loan repayment transaction
+                await addData('transactions', {
+                    user_id: userId,
+                    group_id: selectedGroupId,
+                    loan_id: loanId,
+                    type: 'loan_repayment',
+                    amount: repaymentAmount,
+                    date: today,
+                    description: `Loan repayment for loan ID ${loanId}`,
+                    is_cash_payment: 0,
+                    is_paid: 1
+                });
+
+                // Record interest paid transaction if any interest was paid
+                if (interestPaidAmount > 0) {
+                    await addData('transactions', {
+                        user_id: userId,
+                        group_id: selectedGroupId,
+                        loan_id: loanId,
+                        type: 'interest_paid',
+                        amount: interestPaidAmount,
+                        date: today,
+                        description: `Interest paid for loan ID ${loanId}`,
+                        is_cash_payment: 0,
+                        is_paid: 1
+                    });
+                    // Update group profit
+                    const group = await getDataById('groups', selectedGroupId);
+                    group.group_profit = parseFloat((group.group_profit + interestPaidAmount).toFixed(2));
+                    await updateData('groups', group);
+                }
+
+                if (loan.status === 'paid_off') {
+                    flashMessage(getMarathiLabel('loan_fully_paid_off', { loan_id: loanId }), 'success');
+                } else {
+                    flashMessage(getMarathiLabel('loan_repayment_processed_success', {
+                        repayment_amount: repaymentAmount.toFixed(2),
+                        loan_id: loanId,
+                        actual_principal_repaid: principalRepaidAmount.toFixed(2),
+                        interest_paid_amount: interestPaidAmount.toFixed(2),
+                        new_outstanding_balance: newOutstandingBalance.toFixed(2)
+                    }), 'success');
+                }
+                closeModal('repayLoanModal');
+                await renderDashboard(selectedGroupId);
+            } catch (e) {
+                flashMessage(getMarathiLabel('error_repaying_loan', { error: e.message }), 'danger');
+            }
+        });
+
+        function openChangeInterestRateModal(loanId, currentInterestRate) {
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            document.getElementById('change_rate_loan_id').value = loanId;
+            document.getElementById('display_change_rate_loan_id').innerText = loanId;
+            document.getElementById('display_old_interest_rate').innerText = parseFloat(currentInterestRate).toFixed(2);
+            document.getElementById('new_interest_rate_input').value = parseFloat(currentInterestRate).toFixed(2); // Pre-fill with current rate
+            openModal('changeInterestRateModal');
+        }
+
+        document.getElementById('change-interest-rate-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const loanId = parseInt(document.getElementById('change_rate_loan_id').value);
+            const newInterestRate = parseFloat(document.getElementById('new_interest_rate_input').value);
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+
+            if (isNaN(newInterestRate) || newInterestRate < 0 || newInterestRate > 100) {
+                flashMessage(getMarathiLabel('interest_rate_range_error'), 'danger');
+                return;
+            }
+
+            try {
+                const loan = await getDataById('loans', loanId);
+                if (!loan || loan.group_id !== selectedGroupId) {
+                    flashMessage(getMarathiLabel('loan_not_found', { loan_id: loanId }), 'danger');
+                    return;
+                }
+                const oldRate = loan.current_interest_rate;
+                loan.current_interest_rate = newInterestRate;
+                await updateData('loans', loan);
+                flashMessage(getMarathiLabel('loan_rate_changed_success', { loan_id: loanId, old_rate: oldRate, new_rate: newInterestRate }), 'success');
+                closeModal('changeInterestRateModal');
+                await renderDashboard(selectedGroupId);
+            } catch (e) {
+                flashMessage(getMarathiLabel('error_changing_loan_rate', { error: e.message }), 'danger');
+            }
+        });
+
+        // --- Custom CSV Parsing Function ---
+        /**
+         * Parses a CSV string into an array of objects.
+         * Assumes the first row is the header.
+         * @param {string} csvString The CSV data as a string.
+         * @returns {Array<Object>} An array of objects, where each object represents a row.
+         */
+        function parseCSV(csvString) {
+            const lines = csvString.split(/\r?\n/).filter(line => line.trim() !== '');
+            if (lines.length === 0) {
+                return { data: [], errors: [] };
+            }
+
+            const headers = lines[0].split(',').map(header => header.trim());
+            const data = [];
+            const errors = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',');
+                if (values.length !== headers.length) {
+                    errors.push({ message: `Row ${i + 1} has ${values.length} columns, but expected ${headers.length}. Skipping row.`, row: i + 1 });
+                    continue;
+                }
+
+                const rowObject = {};
+                headers.forEach((header, index) => {
+                    rowObject[header] = values[index].trim();
+                });
+                data.push(rowObject);
+            }
+            return { data: data, errors: errors };
+        }
+
+        // --- Bulk Upload Functions (Updated to use custom parseCSV) ---
+        async function downloadSampleTransactionsCsv() {
+            const sampleCsvContent = `user_name,type,amount,date,is_cash_payment,is_paid,loan_id,new_loan_interest_rate
+Sample User 1,contribution,500,${new Date().toISOString().slice(0, 10)},0,1,
+Sample User 2,loan_disbursement,10000,${new Date().toISOString().slice(0, 10)},,24.0,
+Sample User 3,loan_repayment,1200,${new Date().toISOString().slice(0, 10)},0,1,1
+`;
+            const blob = new Blob([sampleCsvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', 'sample_transactions_upload.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function downloadSampleUsersCsv() {
+            const sampleCsvContent = `user_name,is_admin,status
+New User A,0,active
+New User B,1,active
+`;
+            const blob = new Blob([sampleCsvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', 'sample_users_upload.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.getElementById('bulk-upload-users-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const fileInput = document.getElementById('user_csv');
+            const file = fileInput.files[0];
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+
+            if (!selectedGroupId) {
+                flashMessage(getMarathiLabel('please_select_group'), 'danger');
+                return;
+            }
+
+            if (!file) {
+                flashMessage(getMarathiLabel('no_selected_file'), 'danger');
+                return;
+            }
+            if (!file.name.endsWith('.csv')) {
+                flashMessage(getMarathiLabel('invalid_file_type'), 'danger');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const csvString = e.target.result;
+                const { data, errors: parseErrors } = parseCSV(csvString); // Use custom parseCSV
+
+                let processedCount = 0;
+                let errorCount = parseErrors.length;
+                const errors = parseErrors.map(err => `Parsing error: ${err.message}`);
+
+                const existingUsersInGroup = (await getAllData('users')).filter(u => u.group_id === selectedGroupId);
+
+                for (let i = 0; i < data.length; i++) {
+                    const row_num = i + 2; // CSV rows are 1-indexed, plus header
+                    const rowData = data[i];
+                    try {
+                        const userName = rowData.user_name ? rowData.user_name.trim() : '';
+                        const isAdminStr = rowData.is_admin ? String(rowData.is_admin).trim().toLowerCase() : '0';
+                        const isAdmin = ['1', 'true', 'yes'].includes(isAdminStr);
+                        const status = rowData.status ? rowData.status.trim().toLowerCase() : 'active';
+
+                        if (!userName) {
+                            errors.push(getMarathiLabel('missing_user_or_group', { row_num: row_num }));
+                            errorCount++;
+                            continue;
+                        }
+
+                        const userExists = existingUsersInGroup.some(u => u.name === userName);
+                        if (userExists) {
+                            flashMessage(getMarathiLabel('user_exists_in_group', { row_num: row_num, user_name: userName, target_group_id: selectedGroupId }), 'info');
+                            processedCount++;
+                            continue;
+                        }
+
+                        await addData('users', {
+                            name: userName,
+                            group_id: selectedGroupId,
+                            is_admin: isAdmin ? 1 : 0,
+                            status: status
+                        });
+                        processedCount++;
+                        flashMessage(getMarathiLabel('user_added_to_group', { row_num: row_num, user_name: userName, target_group_id: selectedGroupId }), 'success');
+
+                    } catch (e) {
+                        errors.push(getMarathiLabel('error_processing_row', { row_num: row_num, error: e.message }));
+                        errorCount++;
+                    }
+                }
+                flashMessage(getMarathiLabel('upload_complete', { processed_count: processedCount, error_count: errorCount }), 'success');
+                errors.forEach(err => flashMessage(err, 'danger'));
+                await renderDashboard(selectedGroupId);
+            };
+            reader.onerror = (e) => {
+                flashMessage(getMarathiLabel('upload_error', { error: e.target.error.message }), 'danger');
+            };
+            reader.readAsText(file);
+        });
+
+        document.getElementById('bulk-upload-transactions-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            const fileInput = document.getElementById('transaction_csv');
+            const file = fileInput.files[0];
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+
+            if (!selectedGroupId) {
+                flashMessage(getMarathiLabel('please_select_group'), 'danger');
+                return;
+            }
+
+            if (!file) {
+                flashMessage(getMarathiLabel('no_selected_file'), 'danger');
+                return;
+            }
+            if (!file.name.endsWith('.csv')) {
+                flashMessage(getMarathiLabel('invalid_file_type'), 'danger');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const csvString = e.target.result;
+                const { data, errors: parseErrors } = parseCSV(csvString); // Use custom parseCSV
+
+                let processedCount = 0;
+                let errorCount = parseErrors.length;
+                const errors = parseErrors.map(err => `Parsing error: ${err.message}`);
+
+                const allUsers = await getAllData('users');
+                const allLoans = await getAllData('loans');
+                const currentGroup = await getDataById('groups', selectedGroupId);
+
+                for (let i = 0; i < data.length; i++) {
+                    const row_num = i + 2;
+                    const rowData = data[i];
+                    try {
+                        const userName = rowData.user_name ? rowData.user_name.trim() : '';
+                        const transactionType = rowData.type ? rowData.type.trim().toLowerCase() : '';
+                        const amountStr = rowData.amount ? String(rowData.amount).trim() : '';
+                        const dateStr = rowData.date ? rowData.date.trim() : new Date().toISOString().slice(0, 10);
+                        const isCashPaymentStr = rowData.is_cash_payment ? String(rowData.is_cash_payment).trim().toLowerCase() : '0';
+                        const isPaidStr = rowData.is_paid ? String(rowData.is_paid).trim().toLowerCase() : '1';
+                        const loanIdStr = rowData.loan_id ? String(rowData.loan_id).trim() : '';
+                        const newLoanInterestRateStr = rowData.new_loan_interest_rate ? String(rowData.new_loan_interest_rate).trim() : '';
+
+                        if (!userName || !transactionType || !amountStr || !dateStr) {
+                            errors.push(getMarathiLabel('missing_user_or_group', { row_num: row_num }));
+                            errorCount++;
+                            continue;
+                        }
+
+                        let amount, isCashPayment, isPaid, loanId = null, newLoanInterestRate = null;
+
+                        try {
+                            amount = parseFloat(amountStr);
+                            if (isNaN(amount) || amount <= 0) throw new Error('Invalid amount');
+                            new Date(dateStr).toISOString().slice(0, 10); // Validate date format
+
+                            isCashPayment = ['1', 'true', 'yes'].includes(isCashPaymentStr);
+                            isPaid = ['1', 'true', 'yes'].includes(isPaidStr);
+                            if (isCashPayment && !isPaid) isPaid = false; // Explicitly set to false if cash and not paid
+                            else if (!isCashPayment) isPaid = true; // Non-cash payments are always paid
+
+                            if (loanIdStr) loanId = parseInt(loanIdStr);
+                            if (newLoanInterestRateStr) newLoanInterestRate = parseFloat(newLoanInterestRateStr);
+
+                        } catch (e) {
+                            errors.push(getMarathiLabel('data_conversion_error', { error: e.message }));
+                            errorCount++;
+                            continue;
+                        }
+
+                        const user = allUsers.find(u => u.name === userName && u.group_id === selectedGroupId);
+                        if (!user) {
+                            errors.push(getMarathiLabel('user_not_found_in_group', { user_name: userName, group_name: currentGroup.name }));
+                            errorCount++;
+                            continue;
+                        }
+
+                        if (transactionType === 'contribution') {
+                            await addData('transactions', {
+                                user_id: user.id,
+                                group_id: selectedGroupId,
+                                type: 'contribution',
+                                amount: amount,
+                                date: dateStr,
+                                is_cash_payment: isCashPayment ? 1 : 0,
+                                is_paid: isPaid ? 1 : 0
+                            });
+                        } else if (transactionType === 'loan_disbursement') {
+                            if (loanId !== null) {
+                                throw new Error(getMarathiLabel('loan_id_not_for_new_loan'));
+                            }
+                            if (newLoanInterestRate === null || isNaN(newLoanInterestRate) || newLoanInterestRate < 0 || newLoanInterestRate > 100) {
+                                throw new Error(getMarathiLabel('invalid_interest_rate', { rate: newLoanInterestRate }));
+                            }
+
+                            const newLoanId = await addData('loans', {
+                                user_id: user.id,
+                                group_id: selectedGroupId,
+                                original_amount: amount,
+                                outstanding_balance: amount,
+                                current_interest_rate: newLoanInterestRate,
+                                issue_date: dateStr,
+                                last_interest_calc_date: dateStr,
+                                status: 'active'
+                            });
+                            await addData('transactions', {
+                                user_id: user.id,
+                                group_id: selectedGroupId,
+                                loan_id: newLoanId,
+                                type: 'loan_disbursement',
+                                amount: amount,
+                                date: dateStr,
+                                description: `Loan disbursement for ${user.name} via bulk upload`,
+                                is_cash_payment: 0,
+                                is_paid: 1
+                            });
+                        } else if (transactionType === 'loan_repayment') {
+                            if (loanId === null) {
+                                throw new Error(getMarathiLabel('loan_id_missing'));
+                            }
+                            const loan = allLoans.find(l => l.id === loanId && l.user_id === user.id && l.group_id === selectedGroupId);
+                            if (!loan) {
+                                throw new Error(getMarathiLabel('loan_not_found', { loan_id: loanId }));
+                            }
+                            if (loan.status === 'paid_off') {
+                                throw new Error(getMarathiLabel('loan_already_paid_off'));
+                            }
+
+                            const outstandingBalance = loan.outstanding_balance;
+                            const currentInterestRate = loan.current_interest_rate;
+                            const lastInterestCalcDateStr = loan.last_interest_calc_date;
+
+                            const interestAccruedForRepayment = calculateInterestDue(
+                                outstandingBalance,
+                                currentInterestRate,
+                                lastInterestCalcDateStr,
+                                dateStr
+                            );
+
+                            let interestPaidAmount = Math.min(amount, interestAccruedForRepayment);
+                            let principalRepaidAmount = amount - interestPaidAmount;
+                            let newOutstandingBalance = outstandingBalance - principalRepaidAmount;
+
+                            if (newOutstandingBalance < 0) {
+                                principalRepaidAmount += newOutstandingBalance;
+                                newOutstandingBalance = 0;
+                            }
+
+                            loan.outstanding_balance = newOutstandingBalance;
+                            loan.last_interest_calc_date = dateStr;
+                            if (newOutstandingBalance <= 0) {
+                                loan.status = 'paid_off';
+                                loan.outstanding_balance = 0;
+                            }
+                            await updateData('loans', loan);
+
+                            await addData('transactions', {
+                                user_id: user.id,
+                                group_id: selectedGroupId,
+                                loan_id: loanId,
+                                type: 'loan_repayment',
+                                amount: amount,
+                                date: dateStr,
+                                description: `Loan repayment for loan ID ${loanId} via bulk upload`,
+                                is_cash_payment: 0,
+                                is_paid: 1
+                            });
+
+                            if (interestPaidAmount > 0) {
+                                await addData('transactions', {
+                                    user_id: user.id,
+                                    group_id: selectedGroupId,
+                                    loan_id: loanId,
+                                    type: 'interest_paid',
+                                    amount: interestPaidAmount,
+                                    date: dateStr,
+                                    description: `Interest paid for loan ID ${loanId} via bulk upload`,
+                                    is_cash_payment: 0,
+                                    is_paid: 1
+                                });
+                                const group = await getDataById('groups', selectedGroupId);
+                                group.group_profit = parseFloat((group.group_profit + interestPaidAmount).toFixed(2));
+                                await updateData('groups', group);
+                            }
+                        } else {
+                            errors.push(getMarathiLabel('unknown_transaction_type', { transaction_type: transactionType }));
+                            errorCount++;
+                            continue;
+                        }
+                        processedCount++;
+                    } catch (e) {
+                        errors.push(getMarathiLabel('error_processing_row', { row_num: row_num, error: e.message }));
+                        errorCount++;
+                    }
+                }
+                flashMessage(getMarathiLabel('upload_complete', { processed_count: processedCount, error_count: errorCount }), 'success');
+                errors.forEach(err => flashMessage(err, 'danger'));
+                await renderDashboard(selectedGroupId);
+            };
+            reader.onerror = (e) => {
+                flashMessage(getMarathiLabel('upload_error', { error: e.target.error.message }), 'danger');
+            };
+            reader.readAsText(file);
+        });
+
+        document.getElementById('filter-transactions-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const userId = parseInt(document.getElementById('filter-user-id').value);
+            const fromDate = document.getElementById('filter-from-date').value;
+            const toDate = document.getElementById('filter-to-date').value;
+            await viewTransactions(userId, fromDate, toDate);
+        });
+
+        function clearTransactionFilter() {
+            const userId = parseInt(document.getElementById('filter-user-id').value);
+            document.getElementById('filter-from-date').value = '';
+            document.getElementById('filter-to-date').value = '';
+            viewTransactions(userId);
+        }
+
+        async function downloadTransactionsCsv() {
+            const userId = parseInt(document.getElementById('filter-user-id').value);
+            const user = await getDataById('users', userId);
+            if (!user) {
+                flashMessage(getMarathiLabel('user_not_found'), 'danger');
+                return;
+            }
+
+            const allTransactions = await getAllData('transactions');
+            const userTransactions = allTransactions.filter(t => t.user_id === userId);
+
+            let csvContent = "Type,Amount,Date,Description,Is Cash Payment,Is Paid,Loan ID\n";
+            userTransactions.forEach(t => {
+                const isCashPayment = t.is_cash_payment ? getMarathiLabel('yes') : getMarathiLabel('no');
+                const isPaid = t.is_paid ? getMarathiLabel('yes') : getMarathiLabel('no');
+                csvContent += `${t.type},${t.amount.toFixed(2)},${t.date},"${t.description || ''}",${isCashPayment},${isPaid},${t.loan_id || ''}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', `${user.name}_transactions_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function downloadUsersCsv() {
+            const selectedGroupId = parseInt(localStorage.getItem('selectedGroupId'));
+            if (!selectedGroupId) {
+                flashMessage(getMarathiLabel('please_select_group'), 'danger');
+                return;
+            }
+            const group = await getDataById('groups', selectedGroupId);
+            if (!group) {
+                flashMessage(getMarathiLabel('group_not_found', { group_identifier: selectedGroupId }), 'danger');
+                return;
+            }
+
+            const allUsers = await getAllData('users');
+            const groupUsers = allUsers.filter(u => u.group_id === selectedGroupId);
+
+            let csvContent = "User Name,Is Admin,Status\n";
+            groupUsers.forEach(user => {
+                const isAdmin = user.is_admin ? getMarathiLabel('yes') : getMarathiLabel('no');
+                csvContent += `${user.name},${isAdmin},${user.status}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', `${group.name}_users_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function openUpdateBankRateModal(groupId, currentRate) {
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            document.getElementById('new_bank_interest_rate_input_2').value = parseFloat(currentRate).toFixed(2);
+            openModal('updateBankRateModal');
+        }
+    </script>
+</body>
+</html>
