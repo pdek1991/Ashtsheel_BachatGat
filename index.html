@@ -795,35 +795,51 @@
          * @returns {Promise<{content: Array<Object>, sha: string}|null>} - Parsed JSON content and SHA, or null if file not found.
          */
         async function _fetchGitHubFile(filePath) {
-            const url = `${GITHUB_API_BASE_URL}${filePath}?ref=${GITHUB_DATA_BRANCH}`;
-            try {
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json' // Request JSON metadata to get SHA
-                    }
-                });
+    const GH_USER = 'pdek1991';
+    const GH_REPO = 'Ashtsheel_BachatGat';
+    const GH_BRANCH = 'data';
+    const GH_API_BASE = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents`;
 
-                if (response.status === 404) {
-                    console.warn(`File ${filePath} not found on GitHub. Assuming empty or creating.`);
-                    return { content: [], sha: null }; // Indicate new file scenario
-                }
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`GitHub API Error fetching ${filePath}: ${response.status} - ${errorText}`);
-                }
+    const url = `${GH_API_BASE}/${filePath}?ref=${GH_BRANCH}`;
 
-                const data = await response.json();
-                // GitHub API returns content base64 encoded for files. Decode it.
-                const base64 = data.content.replace(/\n/g, '');  // remove line breaks
-				const decodedContent = JSON.parse(atob(base64));
-                return { content: decodedContent, sha: data.sha };
-
-            } catch (error) {
-                console.error(`Error in _fetchGitHubFile(${filePath}):`, error);
-                throw error; // Re-throw to be caught by calling functions
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/vnd.github.v3+json'
             }
+        });
+
+        if (response.status === 404) {
+            console.warn(`File ${filePath} not found on GitHub. Assuming empty or creating.`);
+            return { content: [], sha: null };
         }
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`GitHub API Error fetching ${filePath}: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+
+        // Clean and decode the base64 content
+        const base64 = data.content.replace(/\n/g, '');
+        const decoded = atob(base64);
+
+        // Try to parse as JSON; if not, fallback to plain text
+        let parsedContent;
+        try {
+            parsedContent = JSON.parse(decoded);
+        } catch (e) {
+            parsedContent = decoded;
+        }
+
+        return { content: parsedContent, sha: data.sha };
+
+    } catch (error) {
+        console.error(`❌ Error in _fetchGitHubFile(${filePath}):`, error);
+        throw error;
+    }
+}
 
         /**
          * Updates content of a file on GitHub.
