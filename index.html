@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>अष्टशील बचत गट</title>
+    <title>अष्टशील महिला बचत गट</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -795,7 +795,7 @@
          * @returns {Promise<{content: Array<Object>, sha: string}|null>} - Parsed JSON content and SHA, or null if file not found.
          */
         async function _fetchGitHubFile(filePath) {
-            const url = `${GITHUB_API_BASE_URL}${GITHUB_DATA_BRANCH}/${filePath}?ref=${GITHUB_DATA_BRANCH}`;
+            const url = `${GITHUB_API_BASE_URL}${filePath}?ref=${GITHUB_DATA_BRANCH}`;
             try {
                 const response = await fetch(url, {
                     headers: {
@@ -815,7 +815,8 @@
 
                 const data = await response.json();
                 // GitHub API returns content base64 encoded for files. Decode it.
-                const decodedContent = JSON.parse(atob(data.content));
+                const base64 = data.content.replace(/\n/g, '');  // remove line breaks
+				const decodedContent = JSON.parse(atob(base64));
                 return { content: decodedContent, sha: data.sha };
 
             } catch (error) {
