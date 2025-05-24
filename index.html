@@ -810,7 +810,7 @@
         });
 
         if (response.status === 404) {
-            console.warn(`File ${filePath} not found on GitHub. Assuming empty or creating.`);
+            console.warn(`File ${filePath} not found on GitHub.`);
             return { content: [], sha: null };
         }
 
@@ -820,26 +820,24 @@
         }
 
         const data = await response.json();
-
-        // Clean and decode the base64 content
         const base64 = data.content.replace(/\n/g, '');
         const decoded = atob(base64);
 
-        // Try to parse as JSON; if not, fallback to plain text
-        let parsedContent;
+        let parsed;
         try {
-            parsedContent = JSON.parse(decoded);
-        } catch (e) {
-            parsedContent = decoded;
+            parsed = JSON.parse(decoded);
+        } catch {
+            parsed = decoded;
         }
 
-        return { content: parsedContent, sha: data.sha };
+        return { content: parsed, sha: data.sha };
 
     } catch (error) {
-        console.error(`❌ Error in _fetchGitHubFile(${filePath}):`, error);
+        console.error(`Error in _fetchGitHubFile(${filePath}):`, error);
         throw error;
     }
 }
+
 
         /**
          * Updates content of a file on GitHub.
