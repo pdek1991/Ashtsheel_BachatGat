@@ -911,35 +911,43 @@
          * @param {Object} newItem - The item to add.
          * @returns {Promise<string>} - The ID of the newly added item.
          */
-        async function addData(storeName, newItem) {
-            try {
-                const filePath = `${storeName}.json`;
-                const { content: currentData, sha: currentSha } = await _fetchGitHubFile(filePath);
+        async function addData(dataType, newData) {
+    // ... इतर कोड ...
 
-                if (!newItem.id) {
-                    newItem.id = generateUniqueId();
-                }
+    const filePath = `data/${dataType}.json`;
+    let currentData = [];
+    let fileSha = null;
 
-                currentData.push(newItem);
-                const success = await _updateGitHubFile(filePath, currentData, currentSha);
-                if (success) {
-                    // Update in-memory cache
-                    switch (storeName) {
-                        case 'groups': groupData.push(newItem); break;
-                        case 'users': userData.push(newItem); break;
-                        case 'transactions': transactionData.push(newItem); break;
-                        case 'loans': loanData.push(newItem); break;
-                    }
-                    return newItem.id;
-                } else {
-                    throw new Error('Failed to add data to GitHub.');
-                }
-            } catch (error) {
-                console.error(`Error in addData(${storeName}):`, error);
-                flashMessage(getMarathiLabel('error_adding_data', { error: error.message }), 'danger');
-                throw error;
-            }
+    try {
+        const fileContent = await _fetchGitHubFile(filePath); // _fetchGitHubFile फाईलचा कंटेंट ऑब्जेक्ट म्हणून देतो
+        // येथे तपासणी आवश्यक: fileContent हे ॲरे आहे की नाही?
+        if (typeof fileContent === 'object' && fileContent !== null) {
+            // GitHub API fileContent हे एक ऑब्जेक्ट देईल ज्यामध्ये 'content' प्रॉपर्टी असेल.
+            // ती 'content' प्रॉपर्टी Base64 एन्कोडेड स्ट्रिंग आहे.
+            // तुम्हाला ती डीकोड करून, JSON म्हणून पार्स करून नंतर वापरणे आवश्यक आहे.
+            const decodedContent = atob(fileContent.content); // Base64 डीकोड करा
+            currentData = JSON.parse(decodedContent); // JSON स्ट्रिंगला JavaScript ऑब्जेक्ट/ॲरे मध्ये पार्स करा
         }
+    } catch (error) {
+        // जर फाईल अस्तित्वात नसेल, तर ही नवीन फाईल आहे
+        if (error.message.includes('404')) {
+            console.warn(`File ${filePath} not found, creating new one.`);
+            currentData = []; // नवीन फाईलसाठी रिकामी ॲरे सुरू करा
+        } else {
+            console.error(`Error fetching ${filePath}:`, error);
+            throw error;
+        }
+    }
+
+    if (!Array.isArray(currentData)) { // येथे तपासणी करा
+        console.error(`Error: Data fetched for ${dataType} is not an array. Found type: ${typeof currentData}`, currentData);
+        throw new Error(`Data for ${dataType} is not an array, cannot push new data.`);
+    }
+
+    currentData.push(newData); // आता हे काम करेल, जर currentData ॲरे असेल तर
+
+    // ... बाकीचा कोड जो GitHub वर अपडेट करतो ...
+}
 
         /**
          * Retrieves all items from a data store. Primarily returns from in-memory cache.
