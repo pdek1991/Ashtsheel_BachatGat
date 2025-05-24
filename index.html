@@ -731,21 +731,48 @@
             'repayment_amount_label': 'परतफेड रक्कम',
             'repay_loan_submit_btn': 'परतफेड करा',
             'change_interest_rate_modal_heading': 'व्याज दर बदला',
-            'loan_id_change_rate_label': 'कर्ज आयडी:',
-            'current_rate_change_rate_label': 'सध्याचा दर:',
-            'new_interest_rate_input_label': 'नवीन व्याज दर (%)',
-            'change_interest_rate_submit_btn': 'व्याज दर बदला',
-            'choose_csv_file_transactions_label': 'व्यवहारांसाठी CSV फाइल निवडा',
-            'upload_transactions_btn': 'व्यवहार अपलोड करा',
-            'download_sample_transactions_btn': 'नमुना व्यवहार CSV डाउनलोड करा',
-            'bulk_upload_transactions_heading': 'बल्क व्यवहार अपलोड करा',
-            'choose_csv_file_users_label': 'सदस्यांसाठी CSV फाइल निवडा',
-            'upload_users_btn': 'सदस्य अपलोड करा',
-            'download_sample_users_btn': 'नमुना सदस्य CSV डाउनलोड करा',
-            'bulk_upload_users_heading': 'बल्क सदस्य अपलोड करा',
-            'csv_bulk_uploads_heading': 'CSV बल्क अपलोड',
-            'error_fetching_data': 'डेटा मिळवताना त्रुटी: {data_type}: {error}',
-            'error_fetching_groups': 'गट मिळवताना त्रुटी: {error}'
+            'loan_id_change-rate-label': 'कर्ज आयडी:',
+            'current-rate-change-rate-label': 'सध्याचा दर:',
+            'new-interest-rate-input-label': 'नवीन व्याज दर (%)',
+            'change-interest-rate-submit-btn': 'व्याज दर बदला',
+            'choose-csv-file-transactions-label': 'व्यवहारांसाठी CSV फाइल निवडा',
+            'upload-transactions-btn': 'व्यवहार अपलोड करा',
+            'download-sample-transactions-btn': 'नमुना व्यवहार CSV डाउनलोड करा',
+            'bulk-upload-transactions-heading': 'बल्क व्यवहार अपलोड करा',
+            'choose-csv-file-users-label': 'सदस्यांसाठी CSV फाइल निवडा',
+            'upload-users-btn': 'सदस्य अपलोड करा',
+            'download-sample-users-btn': 'नमुना सदस्य CSV डाउनलोड करा',
+            'bulk-upload-users-heading': 'बल्क सदस्य अपलोड करा',
+            'csv-bulk-uploads-heading': 'CSV बल्क अपलोड',
+            'error-fetching-data': 'डेटा मिळवताना त्रुटी: {data_type}: {error}',
+            'error-fetching-groups': 'गट मिळवताना त्रुटी: {error}',
+            'no_groups_found': 'कोणतेही गट आढळले नाहीत.',
+            'no_data_in_csv': 'CSV फाइलमध्ये कोणताही डेटा नाही.',
+            'upload_errors_summary': '{count} त्रुटींसह बल्क अपलोड पूर्ण झाले.',
+            'user_name_required': 'सदस्य नाव आवश्यक आहे.',
+            'user_exists_error': 'त्रुटी: सदस्य "{user_name}" आधीच अस्तित्वात आहे.',
+            'amount_positive_error': 'रक्कम सकारात्मक असणे आवश्यक आहे.',
+            'error_marking_paid': 'भरणा चिन्हांकित करताना त्रुटी.',
+            'no_loans_found': 'कोणतेही कर्ज आढळले नाही.',
+            'view_loans': 'कर्जे पहा',
+            'no_loans': 'कर्जे नाहीत',
+            'loan_details_for': '{user_name} साठी कर्जाचा तपशील',
+            'close': 'बंद करा',
+            'not_applicable': 'लागू नाही',
+            'pending': 'प्रलंबित',
+            'paid': 'भरले',
+            'status_received': 'मिळाले',
+            'status_pending': 'प्रलंबित',
+            'status_active': 'सक्रिय',
+            'status_paid_off': 'फेडले',
+            'invalid_bank_interest_rate': 'अवैध बँक व्याज दर.',
+            'view_dashboard': 'डॅशबोर्ड पहा',
+            'are_you_sure_delete_user': 'तुम्हाला खात्री आहे की तुम्हाला हा सदस्य हटवायचा आहे?',
+            'user_deleted_success': 'सदस्य "{name}" यशस्वीरित्या हटवला!',
+            'error_deleting_user': 'सदस्य हटवताना त्रुटी: {error}',
+            'are_you_sure_delete_group': 'तुम्हाला खात्री आहे की तुम्हाला हा गट हटवायचा आहे? या गटातील सर्व सदस्य आणि व्यवहार हटवले जातील.',
+            'group_deleted_success': 'गट "{name}" यशस्वीरित्या हटवला!',
+            'error_deleting_group': 'गट हटवताना त्रुटी: {error}'
         };
 
         function getMarathiLabel(key, replacements = {}) {
@@ -768,21 +795,32 @@
             }, 5000); // Message disappears after 5 seconds
         }
 
+        /**
+         * Fetches content of a file from GitHub and returns its content (parsed JSON) and SHA.
+         * Handles 404 (Not Found) gracefully by returning null for content/sha.
+         * @param {string} filePath - Path to the file relative to the data branch (e.g., 'groups.json').
+         * @param {string} method - HTTP method (GET, PUT, DELETE).
+         * @param {Array<Object>|Object|null} content - The content to write for PUT, null otherwise.
+         * @param {string|null} sha - The SHA of the current file for PUT/DELETE, null for creation.
+         * @returns {Promise<{content: string, sha: string}|null>} - Decoded content and SHA, or null if file not found/error.
+         */
         async function _fetchGitHubFile(filePath, method = 'GET', content = null, sha = null) {
-            const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}?ref=${GITHUB_DATA_BRANCH}`;
+            // Corrected URL construction: filePath should already be like 'groups.json'
+            const url = `${GITHUB_API_BASE_URL}${filePath}?ref=${GITHUB_DATA_BRANCH}`;
             const headers = {
                 'Authorization': `token ${GITHUB_TOKEN}`,
                 'Accept': 'application/vnd.github.v3+json',
             };
 
             const body = {
-                message: `Update ${filePath}`,
+                message: `${method === 'PUT' ? 'Update' : 'Delete'} ${filePath} from app`,
                 branch: GITHUB_DATA_BRANCH,
             };
 
-            if (content) {
+            if (content !== null) {
                 // For PUT operations, content needs to be stringified and then Base64 encoded
-                body.content = btoa(unescape(encodeURIComponent(JSON.stringify(content))));
+                // Use unescape(encodeURIComponent) for proper UTF-8 handling before btoa
+                body.content = btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2))));
             }
 
             if (sha) {
@@ -794,138 +832,238 @@
                 headers: headers,
             };
 
-            if (method === 'PUT' || method === 'DELETE') { // DELETE also needs a body in GitHub API
+            if (method === 'PUT' || method === 'DELETE') {
                 options.body = JSON.stringify(body);
             }
 
             try {
                 const response = await fetch(url, options);
+
+                if (response.status === 404 && method === 'GET') {
+                    console.warn(`_fetchGitHubFile: File ${filePath} not found (404).`);
+                    return null; // Return null for GET if file not found
+                }
                 if (!response.ok) {
                     const errorText = await response.text();
-                    console.error(`GitHub API Error (${response.status} - ${response.statusText}): ${errorText}`);
-                    // Throw a specific error for handling in calling functions
-                    throw new Error(`Failed to fetch/update GitHub file: ${response.status} ${response.statusText} - ${errorText}`);
+                    console.error(`_fetchGitHubFile: GitHub API Error (${response.status} - ${response.statusText}): ${errorText}`);
+                    throw new Error(`GitHub API Error: ${response.status} ${response.statusText} - ${errorText}`);
                 }
-                if (method === 'GET') {
-                    // For GET, return the JSON response which contains content and sha
-                    return await response.json();
-                } else {
-                    // For PUT/DELETE, it usually returns the updated file metadata
-                    return await response.json(); 
-                }
+
+                // For GET, return the JSON response which contains content and sha
+                // For PUT/DELETE, it usually returns the updated file metadata (which also has SHA)
+                return await response.json();
+
             } catch (error) {
-                console.error(`_fetchGitHubFile: Error fetching/updating ${filePath}:`, error);
+                console.error(`_fetchGitHubFile: Error during fetch/update for ${filePath}:`, error);
                 throw error; // Re-throw to propagate to calling functions
             }
         }
 
-        async function addData(dataType, newData) {
-            // FIX 1: Correct file path - remove 'data/' prefix if files are directly in 'data' branch root
-            const filePath = `${dataType}.json`; // Corrected path
-            let currentData = [];
+        /**
+         * Adds a new item to a data store and persists it to GitHub.
+         * @param {string} dataType - The name of the data type (e.g., 'groups', 'users').
+         * @param {Object} newItem - The item to add.
+         * @returns {Promise<boolean>} - True if successful, false otherwise.
+         */
+        async function addData(dataType, newItem) {
+            // Corrected file path: filePath should be like 'groups.json'
+            const filePath = `${dataType}.json`;
+            let currentData = []; // Default to empty array
             let fileSha = null;
 
             try {
                 const githubFileResponse = await _fetchGitHubFile(filePath, 'GET');
 
-                // FIX 2: Check if content exists before decoding and parsing
                 if (githubFileResponse && githubFileResponse.content) {
                     const base64Content = githubFileResponse.content;
                     fileSha = githubFileResponse.sha;
 
                     try {
                         const decodedContent = atob(base64Content); // Handles InvalidCharacterError
-                        // FIX 3: Robust JSON parsing
                         const parsedContent = JSON.parse(decodedContent); // Handles SyntaxError: Unexpected end of JSON input
 
-                        // FIX 4: Ensure currentData is always an array
                         if (Array.isArray(parsedContent)) {
                             currentData = parsedContent;
                         } else {
-                            console.warn(`Warning: ${filePath} content is not a valid JSON array. Initializing with empty array.`, parsedContent);
+                            console.warn(`Warning: ${filePath} content is not a valid JSON array. Initializing with empty array.`);
                             currentData = [];
                         }
                     } catch (decodeParseError) {
-                        // Catch errors from atob or JSON.parse
                         console.error(`Error decoding or parsing content for ${filePath}:`, decodeParseError);
                         console.warn(`Assuming ${filePath} is empty or malformed. Initializing with empty array.`);
                         currentData = [];
                     }
                 } else {
-                    // If no content received (e.g., new file or 404 gracefully handled by _fetchGitHubFile)
-                    console.warn(`No content received for ${filePath}. Initializing with empty array.`);
+                    // This branch is hit if _fetchGitHubFile returned null (e.g., 404 for GET)
+                    console.warn(`No existing content found for ${filePath}. Initializing with empty array.`);
                     currentData = [];
                 }
             } catch (error) {
-                // FIX 5: Gracefully handle file not found or other fetch errors
-                if (error.message.includes('404')) {
-                    console.warn(`File ${filePath} not found. Initializing with empty array for new data.`);
-                    currentData = [];
-                } else {
-                    console.error(`Error fetching existing data for ${dataType}.json:`, error);
-                    flashMessage(getMarathiLabel('error_fetching_groups', { error: error.message }), 'danger');
-                    return false;
-                }
+                // Catch any other errors during initial fetch (e.g., network issues)
+                console.error(`Error fetching existing data for ${filePath}:`, error);
+                flashMessage(getMarathiLabel('error_fetching_data', { data_type: dataType, error: error.message }), 'danger');
+                return false;
             }
 
-            currentData.push(newData);
+            // Generate unique ID if not already present
+            if (!newItem.id) {
+                newItem.id = crypto.randomUUID();
+            }
+            currentData.push(newItem); // Now currentData is guaranteed to be an array
 
             try {
-                const updatedContentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(currentData))));
+                // For PUT, pass the entire updated array and the current SHA (if available)
                 await _fetchGitHubFile(filePath, 'PUT', currentData, fileSha);
-                console.log(`Successfully added data to ${dataType}.json`);
+                console.log(`Successfully added data to ${filePath}`);
                 return true;
             } catch (error) {
-                console.error(`Error saving data to ${dataType}.json:`, error);
-                flashMessage(getMarathiLabel('error_adding_group', { error: error.message }), 'danger');
+                console.error(`Error saving data to ${filePath}:`, error);
+                flashMessage(getMarathiLabel('error_adding_group', { error: error.message }), 'danger'); // Assuming it's for groups, generalize if needed
                 return false;
             }
         }
 
+        /**
+         * Retrieves all items from a data store. Returns from in-memory cache after initial load.
+         * If in-memory cache is empty, attempts to fetch from GitHub.
+         * @param {string} dataType - The name of the data type (e.g., 'groups', 'users').
+         * @returns {Promise<Array<Object>>} - An array of items.
+         */
         async function getAllData(dataType) {
-            // FIX 1: Correct file path - remove 'data/' prefix
-            const filePath = `${dataType}.json`; // Corrected path
+            // Corrected file path
+            const filePath = `${dataType}.json`;
+            let data = [];
+
             try {
                 const githubFileResponse = await _fetchGitHubFile(filePath, 'GET');
 
-                // FIX 2: Check if content exists before decoding and parsing
                 if (githubFileResponse && githubFileResponse.content) {
                     const base64Content = githubFileResponse.content;
                     try {
-                        const decodedContent = atob(base64Content); // Handles InvalidCharacterError
-                        // FIX 3: Robust JSON parsing
-                        const parsedContent = JSON.parse(decodedContent); // Handles SyntaxError: Unexpected end of JSON input
+                        const decodedContent = atob(base64Content);
+                        const parsedContent = JSON.parse(decodedContent);
 
-                        // FIX 4: Ensure returned data is always an array
                         if (Array.isArray(parsedContent)) {
-                            return parsedContent;
+                            data = parsedContent;
                         } else {
                             console.warn(`Warning: ${filePath} content is not a valid JSON array. Returning empty array.`, parsedContent);
-                            return [];
+                            data = [];
                         }
                     } catch (decodeParseError) {
-                        // Catch errors from atob or JSON.parse
                         console.error(`Error decoding or parsing content for ${filePath}:`, decodeParseError);
                         console.warn(`Assuming ${filePath} is empty or malformed. Returning empty array.`);
-                        return [];
+                        data = [];
                     }
                 } else {
-                    // If no content received (e.g., new file or 404 gracefully handled by _fetchGitHubFile)
                     console.warn(`No content received for ${filePath}. Returning empty array.`);
-                    return [];
+                    data = [];
                 }
             } catch (error) {
-                // FIX 5: Gracefully handle file not found or other fetch errors
-                if (error.message.includes('404')) {
-                    console.warn(`File ${filePath} not found. Returning empty array.`);
-                    return [];
+                console.error(`Error fetching all ${dataType} data from GitHub:`, error);
+                flashMessage(getMarathiLabel('error_fetching_data', { data_type: dataType, error: error.message }), 'danger');
+                data = [];
+            }
+
+            // Update in-memory cache after successful fetch
+            switch (dataType) {
+                case 'groups': groupData = data; break;
+                case 'users': userData = data; break;
+                case 'transactions': transactionData = data; break;
+                case 'loans': loanData = data; break;
+            }
+            return data;
+        }
+
+        /**
+         * Updates an existing item in a data store and persists it to GitHub.
+         * This function now takes the full updated array to write back.
+         * @param {string} dataType - The name of the data type.
+         * @param {Array<Object>} allUpdatedData - The complete array of data to write back.
+         * @returns {Promise<boolean>} - True if successful, false otherwise.
+         */
+        async function updateData(dataType, allUpdatedData) {
+            const filePath = `${dataType}.json`;
+            let fileSha = null;
+
+            try {
+                // Fetch current SHA to ensure we're updating the latest version
+                const githubFileResponse = await _fetchGitHubFile(filePath, 'GET');
+                if (githubFileResponse && githubFileResponse.sha) {
+                    fileSha = githubFileResponse.sha;
                 } else {
-                    console.error(`Error fetching all ${dataType} data:`, error);
-                    flashMessage(getMarathiLabel('error_fetching_data', { data_type: dataType, error: error.message }), 'danger');
-                    return [];
+                    console.warn(`No SHA found for ${filePath}. This might be a new file or an error during fetch. Attempting to create/overwrite.`);
                 }
+            } catch (error) {
+                console.error(`Error fetching SHA for ${filePath} during update:`, error);
+                flashMessage(`Error preparing to update ${dataType}: ${error.message}`, 'danger');
+                return false;
+            }
+
+            try {
+                // Pass the entire updated array and the SHA
+                await _fetchGitHubFile(filePath, 'PUT', allUpdatedData, fileSha);
+                console.log(`Successfully updated ${filePath}`);
+                // Update in-memory cache directly after successful write
+                switch (dataType) {
+                    case 'groups': groupData = allUpdatedData; break;
+                    case 'users': userData = allUpdatedData; break;
+                    case 'transactions': transactionData = allUpdatedData; break;
+                    case 'loans': loanData = allUpdatedData; break;
+                }
+                return true;
+            } catch (error) {
+                console.error(`Error updating ${filePath}:`, error);
+                flashMessage(`Error updating ${dataType}: ${error.message}`, 'danger');
+                return false;
             }
         }
+
+        /**
+         * Deletes an item from a data store and persists the change to GitHub.
+         * This function now takes the complete updated array to write back.
+         * @param {string} dataType - The name of the data type.
+         * @param {Array<Object>} allRemainingData - The complete array of data after deletion.
+         * @returns {Promise<boolean>} - True if successful, false otherwise.
+         */
+        async function deleteData(dataType, allRemainingData) {
+            const filePath = `${dataType}.json`;
+            let fileSha = null;
+
+            try {
+                // Fetch current SHA
+                const githubFileResponse = await _fetchGitHubFile(filePath, 'GET');
+                if (githubFileResponse && githubFileResponse.sha) {
+                    fileSha = githubFileResponse.sha;
+                } else {
+                    console.warn(`No SHA found for ${filePath}. Cannot delete a non-existent file.`);
+                    flashMessage(`Error deleting ${dataType}: File not found.`, 'danger');
+                    return false;
+                }
+            } catch (error) {
+                console.error(`Error fetching SHA for ${filePath} during delete:`, error);
+                flashMessage(`Error preparing to delete ${dataType}: ${error.message}`, 'danger');
+                return false;
+            }
+
+            try {
+                // Pass the entire remaining array and the SHA
+                await _fetchGitHubFile(filePath, 'PUT', allRemainingData, fileSha);
+                console.log(`Successfully deleted item(s) from ${filePath}`);
+                // Update in-memory cache directly after successful write
+                switch (dataType) {
+                    case 'groups': groupData = allRemainingData; break;
+                    case 'users': userData = allRemainingData; break;
+                    case 'transactions': transactionData = allRemainingData; break;
+                    case 'loans': loanData = allRemainingData; break;
+                }
+                return true;
+            } catch (error) {
+                console.error(`Error deleting from ${filePath}:`, error);
+                flashMessage(`Error deleting ${dataType}: ${error.message}`, 'danger');
+                return false;
+            }
+        }
+
 
         // --- Authentication Functions ---
         async function login(username, password) {
@@ -1050,7 +1188,7 @@
                 total_loans_disbursed: 0,
                 total_loan_repayments: 0,
                 total_interest_received: 0,
-                last_interest_calculation_date: new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+                last_interest_calculation_date: new Date().toISOString().slice(0, 10) //YYYY-MM-DD
             };
 
             const success = await addData('groups', newGroup);
@@ -1074,7 +1212,7 @@
                 return false;
             }
 
-            const allGroups = await getAllData('groups');
+            let allGroups = await getAllData('groups'); // Get latest data
             const groupIndex = allGroups.findIndex(g => g.id === groupId);
 
             if (groupIndex === -1) {
@@ -1082,26 +1220,15 @@
                 return false;
             }
 
-            const groupToUpdate = { ...allGroups[groupIndex] }; // Create a copy
-            const oldSha = allGroups[groupIndex].sha; // Assuming SHA is part of the object from getAllData response
-            groupToUpdate.bank_interest_rate = newBankRate;
+            allGroups[groupIndex].bank_interest_rate = newBankRate; // Update the specific group in the array
 
-            try {
-                // For updating, we need the existing SHA
-                const filePath = `groups.json`;
-                const success = await _fetchGitHubFile(filePath, 'PUT', allGroups, oldSha); // Sending allGroups to update the specific one
-
-                if (success) {
-                    flashMessage(getMarathiLabel('update_bank_rate_success'), 'success');
-                    await loadGroupSelect(); // Reload groups after update
-                    return true;
-                } else {
-                    flashMessage(getMarathiLabel('error_updating_bank_rate', { error: 'Unknown error' }), 'danger');
-                    return false;
-                }
-            } catch (error) {
-                console.error('Error updating bank rate:', error);
-                flashMessage(getMarathiLabel('error_updating_bank_rate', { error: error.message }), 'danger');
+            const success = await updateData('groups', allGroups); // Pass the entire updated array
+            if (success) {
+                flashMessage(getMarathiLabel('update_bank_rate_success'), 'success');
+                await loadGroupSelect(); // Reload groups after update
+                return true;
+            } else {
+                flashMessage(getMarathiLabel('error_updating_bank_rate', { error: 'Unknown error' }), 'danger');
                 return false;
             }
         }
@@ -1128,7 +1255,8 @@
                 return;
             }
 
-            const usersInGroup = (await getAllData('users')).filter(u => u.group_id === selectedGroupId);
+            const allUsers = await getAllData('users'); // Get latest data
+            const usersInGroup = allUsers.filter(u => u.group_id === selectedGroupId);
             if (usersInGroup.some(u => u.name.toLowerCase() === userName.toLowerCase())) {
                 flashMessage(getMarathiLabel('user_exists_error', { user_name: userName }), 'danger');
                 return;
@@ -1148,7 +1276,7 @@
                 created_at: new Date().toISOString()
             };
 
-            const success = await addData('users', newUser);
+            const success = await addData('users', newUser); // addData handles adding to the array and saving
             if (success) {
                 flashMessage(getMarathiLabel('user_added_success', { name: userName }), 'success');
                 closeModal('addUserModal');
@@ -1164,7 +1292,7 @@
                 return;
             }
             const selectedGroupId = document.getElementById('groupSelect').value;
-            let allUsers = await getAllData('users');
+            let allUsers = await getAllData('users'); // Get latest data
             const userIndex = allUsers.findIndex(u => u.id === userId && u.group_id === selectedGroupId);
 
             if (userIndex === -1) {
@@ -1172,48 +1300,75 @@
                 return;
             }
 
-            const userToUpdate = allUsers[userIndex];
-            userToUpdate.status = userToUpdate.status === 'active' ? 'inactive' : 'active';
+            allUsers[userIndex].status = allUsers[userIndex].status === 'active' ? 'inactive' : 'active';
             const success = await updateData('users', allUsers); // updateData function handles replacing the entire file
             if (success) {
-                flashMessage(getMarathiLabel('user_status_changed', { status: userToUpdate.status }), 'success');
+                flashMessage(getMarathiLabel('user_status_changed', { status: allUsers[userIndex].status }), 'success');
                 await renderDashboard(selectedGroupId);
             } else {
                 flashMessage(getMarathiLabel('error_updating_user_status'), 'danger');
             }
         }
 
-        async function updateData(dataType, allData) {
-            const filePath = `${dataType}.json`; // Already corrected above
-            let fileSha = null;
-            try {
-                // Fetch current SHA to ensure we're updating the latest version
-                const githubFileResponse = await _fetchGitHubFile(filePath, 'GET');
-                if (githubFileResponse && githubFileResponse.sha) {
-                    fileSha = githubFileResponse.sha;
-                } else {
-                    console.warn(`No SHA found for ${filePath}. This might be a new file.`);
-                }
-            } catch (error) {
-                // If file doesn't exist, proceed without SHA (GitHub will create it)
-                if (error.message.includes('404')) {
-                    console.warn(`File ${filePath} not found. Will create new.`);
-                    fileSha = null;
-                } else {
-                    console.error(`Error fetching SHA for ${filePath}:`, error);
-                    flashMessage(`Error preparing to update ${dataType}: ${error.message}`, 'danger');
-                    return false;
-                }
+        async function deleteUser(userId, userName) {
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            if (!confirm(getMarathiLabel('are_you_sure_delete_user'))) { // Using confirm as per original code structure
+                return;
             }
 
-            try {
-                await _fetchGitHubFile(filePath, 'PUT', allData, fileSha);
-                console.log(`Successfully updated ${dataType}.json`);
-                return true;
-            } catch (error) {
-                console.error(`Error updating ${dataType}.json:`, error);
-                flashMessage(`Error updating ${dataType}: ${error.message}`, 'danger');
-                return false;
+            const selectedGroupId = document.getElementById('groupSelect').value;
+            let allUsers = await getAllData('users');
+            let allTransactions = await getAllData('transactions');
+
+            // Remove user's transactions and loans from in-memory arrays
+            allTransactions = allTransactions.filter(t => t.user_id !== userId);
+            allUsers = allUsers.filter(u => u.id !== userId); // This also removes loans associated with the user
+
+            const userUpdateSuccess = await updateData('users', allUsers);
+            const transactionUpdateSuccess = await updateData('transactions', allTransactions);
+
+            if (userUpdateSuccess && transactionUpdateSuccess) {
+                flashMessage(getMarathiLabel('user_deleted_success', { name: userName }), 'success');
+                await renderDashboard(selectedGroupId); // Re-render dashboard
+            } else {
+                flashMessage(getMarathiLabel('error_deleting_user', { error: 'Failed to delete user data or transactions.' }), 'danger');
+            }
+        }
+
+        async function deleteGroup(groupId, groupName) {
+            if (currentUserRole !== 'admin') {
+                flashMessage(getMarathiLabel('unauthorized_access'), 'danger');
+                return;
+            }
+            if (!confirm(getMarathiLabel('are_you_sure_delete_group'))) { // Using confirm as per original code structure
+                return;
+            }
+
+            let allGroups = await getAllData('groups');
+            let allUsers = await getAllData('users');
+            let allTransactions = await getAllData('transactions');
+
+            // Filter out data related to the group
+            allGroups = allGroups.filter(g => g.id !== groupId);
+            const usersInGroup = allUsers.filter(u => u.group_id === groupId);
+            allUsers = allUsers.filter(u => u.group_id !== groupId);
+            allTransactions = allTransactions.filter(t => t.group_id !== groupId);
+
+            const groupUpdateSuccess = await updateData('groups', allGroups);
+            const userUpdateSuccess = await updateData('users', allUsers);
+            const transactionUpdateSuccess = await updateData('transactions', allTransactions);
+
+            if (groupUpdateSuccess && userUpdateSuccess && transactionUpdateSuccess) {
+                flashMessage(getMarathiLabel('group_deleted_success', { name: groupName }), 'success');
+                // Reset selected group and reload UI
+                document.getElementById('groupSelect').value = '';
+                await loadGroupSelect(); // Reload group select dropdown
+                document.getElementById('dashboard-content').style.display = 'none'; // Hide dashboard
+            } else {
+                flashMessage(getMarathiLabel('error_deleting_group', { error: 'Failed to delete group data.' }), 'danger');
             }
         }
 
@@ -1240,12 +1395,13 @@
                 return;
             }
 
-            const allUsers = await getAllData('users');
-            const user = allUsers.find(u => u.id === userId && u.group_id === selectedGroupId);
-            if (!user) {
+            let allUsers = await getAllData('users'); // Get latest data
+            const userIndex = allUsers.findIndex(u => u.id === userId && u.group_id === selectedGroupId);
+            if (userIndex === -1) {
                 flashMessage(getMarathiLabel('user_not_found_in_group', { group_name: groupData.find(g => g.id === selectedGroupId)?.name, user_name: userId }), 'danger');
                 return;
             }
+            const user = allUsers[userIndex];
 
             const newTransaction = {
                 id: crypto.randomUUID(),
@@ -1260,14 +1416,14 @@
                 description: 'Monthly contribution'
             };
 
-            const success = await addData('transactions', newTransaction);
-            if (success) {
+            const transactionAddSuccess = await addData('transactions', newTransaction);
+            if (transactionAddSuccess) {
                 user.total_contribution += amount;
                 if (isCashPayment) {
                     user.pending_contribution += amount;
                 }
-                const updateSuccess = await updateData('users', allUsers); // Update users file
-                if (updateSuccess) {
+                const userUpdateSuccess = await updateData('users', allUsers); // Update users file
+                if (userUpdateSuccess) {
                     flashMessage(getMarathiLabel('contribution_added_success', { amount: amount, user_name: user.name, status: isCashPayment ? getMarathiLabel('pending_cash_payment') : getMarathiLabel('paid_upi_bank') }), 'success');
                     closeModal('addContributionModal');
                     await renderDashboard(selectedGroupId);
@@ -1285,7 +1441,7 @@
                 return;
             }
             const selectedGroupId = document.getElementById('groupSelect').value;
-            let allTransactions = await getAllData('transactions');
+            let allTransactions = await getAllData('transactions'); // Get latest data
             const transactionIndex = allTransactions.findIndex(t => t.id === transactionId && t.group_id === selectedGroupId);
 
             if (transactionIndex === -1) {
@@ -1301,14 +1457,14 @@
             }
 
             transactionToUpdate.is_paid = true;
-            const success = await updateData('transactions', allTransactions);
+            const transactionUpdateSuccess = await updateData('transactions', allTransactions);
 
-            if (success) {
+            if (transactionUpdateSuccess) {
                 // Update user's pending contribution
-                let allUsers = await getAllData('users');
-                const user = allUsers.find(u => u.id === transactionToUpdate.user_id && u.group_id === selectedGroupId);
-                if (user) {
-                    user.pending_contribution -= transactionToUpdate.amount;
+                let allUsers = await getAllData('users'); // Get latest data
+                const userIndex = allUsers.findIndex(u => u.id === transactionToUpdate.user_id && u.group_id === selectedGroupId);
+                if (userIndex !== -1) {
+                    allUsers[userIndex].pending_contribution -= transactionToUpdate.amount;
                     await updateData('users', allUsers); // Save updated user data
                 }
                 flashMessage(getMarathiLabel('cash_payment_marked_paid'), 'success');
@@ -1350,12 +1506,13 @@
                 return;
             }
 
-            const allUsers = await getAllData('users');
-            const user = allUsers.find(u => u.id === userId && u.group_id === selectedGroupId);
-            if (!user) {
+            let allUsers = await getAllData('users'); // Get latest data
+            const userIndex = allUsers.findIndex(u => u.id === userId && u.group_id === selectedGroupId);
+            if (userIndex === -1) {
                 flashMessage(getMarathiLabel('user_not_found_in_group', { group_name: groupData.find(g => g.id === selectedGroupId)?.name, user_name: userId }), 'danger');
                 return;
             }
+            const user = allUsers[userIndex];
 
             const newLoan = {
                 id: crypto.randomUUID(),
@@ -1373,8 +1530,8 @@
             user.loans.push(newLoan); // Add loan to user's loans array
             user.total_loan_amount += loanAmount;
 
-            const success = await updateData('users', allUsers); // Save updated users file
-            if (success) {
+            const userUpdateSuccess = await updateData('users', allUsers); // Save updated users file
+            if (userUpdateSuccess) {
                 // Also add a transaction entry for loan disbursement
                 const loanTransaction = {
                     id: crypto.randomUUID(),
@@ -1414,17 +1571,15 @@
                 return;
             }
 
-            let allUsers = await getAllData('users');
-            const user = allUsers.find(u => u.group_id === selectedGroupId && u.loans.some(l => l.id === loanId));
-            if (!user) {
+            let allUsers = await getAllData('users'); // Get latest data
+            const userIndex = allUsers.findIndex(u => u.group_id === selectedGroupId && u.loans.some(l => l.id === loanId));
+            if (userIndex === -1) {
                 flashMessage(getMarathiLabel('loan_not_found', { loan_id: loanId }), 'danger');
                 return;
             }
-            const loan = user.loans.find(l => l.id === loanId);
-            if (!loan) { // Should not happen if user is found, but as a safeguard
-                flashMessage(getMarathiLabel('loan_not_found', { loan_id: loanId }), 'danger');
-                return;
-            }
+            const user = allUsers[userIndex];
+            const loanIndex = user.loans.findIndex(l => l.id === loanId);
+            const loan = user.loans[loanIndex];
 
             if (loan.status === 'paid_off') {
                 flashMessage(getMarathiLabel('loan_already_paid_off'), 'info');
@@ -1462,8 +1617,8 @@
                 loan.outstanding_balance = 0;
             }
 
-            const success = await updateData('users', allUsers);
-            if (success) {
+            const userUpdateSuccess = await updateData('users', allUsers);
+            if (userUpdateSuccess) {
                 // Add a transaction entry for loan repayment
                 const repaymentTransaction = {
                     id: crypto.randomUUID(),
@@ -1477,7 +1632,7 @@
                     loan_id: loan.id,
                     description: `Loan repayment for loan ID ${loan.id}`
                 };
-                await addData('transactions', repaymentTransaction);
+                await addData('transactions', repaymentTransaction); // This will add to the transactions file
 
                 flashMessage(getMarathiLabel('loan_repaid_success'), 'success');
                 closeModal('repayLoanModal');
@@ -1503,22 +1658,20 @@
                 return;
             }
 
-            let allUsers = await getAllData('users');
-            const user = allUsers.find(u => u.group_id === selectedGroupId && u.loans.some(l => l.id === loanId));
-            if (!user) {
+            let allUsers = await getAllData('users'); // Get latest data
+            const userIndex = allUsers.findIndex(u => u.group_id === selectedGroupId && u.loans.some(l => l.id === loanId));
+            if (userIndex === -1) {
                 flashMessage(getMarathiLabel('loan_not_found', { loan_id: loanId }), 'danger');
                 return;
             }
-            const loan = user.loans.find(l => l.id === loanId);
-            if (!loan) {
-                flashMessage(getMarathiLabel('loan_not_found', { loan_id: loanId }), 'danger');
-                return;
-            }
+            const user = allUsers[userIndex];
+            const loanIndex = user.loans.findIndex(l => l.id === loanId);
+            const loan = user.loans[loanIndex];
 
             loan.interest_rate = newInterestRate;
-            const success = await updateData('users', allUsers);
+            const userUpdateSuccess = await updateData('users', allUsers);
 
-            if (success) {
+            if (userUpdateSuccess) {
                 flashMessage(getMarathiLabel('interest_rate_change_success'), 'success');
                 closeModal('changeInterestRateModal');
                 await renderDashboard(selectedGroupId);
@@ -1561,8 +1714,8 @@
                 let errorCount = 0;
                 const errors = [];
 
-                const allUsers = await getAllData('users');
-                const allTransactions = await getAllData('transactions');
+                let allUsers = await getAllData('users'); // Get latest data
+                let allTransactions = await getAllData('transactions'); // Get latest data
                 const selectedGroupId = document.getElementById('groupSelect').value;
 
                 for (let i = 1; i < lines.length; i++) {
@@ -1594,10 +1747,12 @@
                             throw new Error(getMarathiLabel('data_conversion_error', { error: 'Missing required fields (user_id, type, date)' }));
                         }
 
-                        const user = allUsers.find(u => u.id === userId && u.group_id === selectedGroupId);
-                        if (!user) {
+                        const userIndex = allUsers.findIndex(u => u.id === userId && u.group_id === selectedGroupId);
+                        if (userIndex === -1) {
                             throw new Error(getMarathiLabel('user_not_found_in_group', { group_name: groupData.find(g => g.id === selectedGroupId)?.name, user_name: userId }));
                         }
+                        const user = allUsers[userIndex];
+
 
                         const newTransaction = {
                             id: crypto.randomUUID(),
@@ -1618,6 +1773,8 @@
                             user.total_contribution += amount;
                             if (isCashPayment) user.pending_contribution += amount;
                         } else if (type === 'loan_disbursement') {
+                            // For bulk upload, if loan_id is provided for disbursement, it's an error.
+                            // The new loan ID will be the transaction ID.
                             if (loanId) {
                                 throw new Error(getMarathiLabel('loan_id_not_for_new_loan'));
                             }
@@ -1638,10 +1795,11 @@
                             if (!loanId) {
                                 throw new Error(getMarathiLabel('loan_id_missing'));
                             }
-                            const loan = user.loans.find(l => l.id === loanId);
-                            if (!loan) {
+                            const loanIndex = user.loans.findIndex(l => l.id === loanId);
+                            if (loanIndex === -1) {
                                 throw new Error(getMarathiLabel('loan_not_found', { loan_id: loanId }));
                             }
+                            const loan = user.loans[loanIndex];
                             if (loan.status === 'paid_off') {
                                 throw new Error(getMarathiLabel('loan_already_paid_off'));
                             }
@@ -1716,7 +1874,7 @@
                 let errorCount = 0;
                 const errors = [];
 
-                const allUsers = await getAllData('users');
+                let allUsers = await getAllData('users'); // Get latest data
                 const selectedGroupId = document.getElementById('groupSelect').value;
 
                 for (let i = 1; i < lines.length; i++) {
@@ -1863,24 +2021,22 @@
                     let currentOutstanding = loan.loan_amount; // Start with original loan amount
                     let totalLoanInterest = 0;
 
-                    // Simulate interest accrual and repayments
-                    let tempDate = new Date(loanIssueDate);
-                    let tempOutstanding = loan.loan_amount;
-
                     // Sort repayments by date to apply them in order
                     const sortedRepayments = [...loan.repayments].sort((a, b) => new Date(a.date) - new Date(b.date));
 
                     let repaymentIndex = 0;
+                    let tempDate = new Date(loanIssueDate);
+                    
                     while (tempDate <= now) {
                         // Accrue interest for the current month
                         const monthlyRate = loan.interest_rate / 100 / 12;
-                        const interestForMonth = tempOutstanding * monthlyRate;
+                        const interestForMonth = currentOutstanding * monthlyRate;
                         totalLoanInterest += interestForMonth;
-                        tempOutstanding += interestForMonth;
+                        currentOutstanding += interestForMonth;
 
                         // Apply repayments that occurred in this month
                         while (repaymentIndex < sortedRepayments.length && new Date(sortedRepayments[repaymentIndex].date).getMonth() === tempDate.getMonth() && new Date(sortedRepayments[repaymentIndex].date).getFullYear() === tempDate.getFullYear()) {
-                            tempOutstanding -= sortedRepayments[repaymentIndex].amount;
+                            currentOutstanding -= sortedRepayments[repaymentIndex].amount;
                             repaymentIndex++;
                         }
                         
@@ -1889,13 +2045,13 @@
                         if (tempDate.getMonth() === 0) { // If month rolls over to Jan, increment year
                             tempDate.setFullYear(tempDate.getFullYear() + 1);
                         }
-                        if (tempOutstanding <= 0) { // Stop if loan is paid off
-                            totalLoanInterest -= tempOutstanding; // Adjust if overpaid interest
-                            tempOutstanding = 0;
+                        if (currentOutstanding <= 0) { // Stop if loan is paid off
+                            totalLoanInterest -= currentOutstanding; // Adjust if overpaid interest
+                            currentOutstanding = 0;
                             break;
                         }
                     }
-                    totalInterestReceived += totalLoanInterest;
+                    groupTotalInterestReceived += totalLoanInterest;
                 });
             });
 
@@ -2085,11 +2241,11 @@
                              }
                              
                              tempDate.setMonth(tempDate.getMonth() + 1);
-                             if (tempDate.getMonth() === 0) {
+                             if (tempDate.getMonth() === 0) { // If month rolls over to Jan, increment year
                                  tempDate.setFullYear(tempDate.getFullYear() + 1);
                              }
-                             if (currentOutstanding <= 0) {
-                                totalLoanInterest -= currentOutstanding;
+                             if (currentOutstanding <= 0) { // Stop if loan is paid off
+                                totalLoanInterest -= currentOutstanding; // Adjust if overpaid interest
                                 currentOutstanding = 0;
                                  break;
                              }
