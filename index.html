@@ -1,628 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sirus Router Control Panel</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        /* Custom styles for Lucide icons */
-        .lucide {
-            display: inline-block;
-            vertical-align: middle;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
-        }
-        .lucide-check { width: 1.25rem; height: 1.25rem; } /* w-5 h-5 */
-        .lucide-history { width: 1.25rem; height: 1.25rem; } /* w-5 h-5 */
-        .lucide-chevron-left, .lucide-chevron-right { width: 1.25rem; height: 1.25rem; } /* w-5 h-5 */
-
-        /* Custom styles for 3D-like blocks */
-        .router-block {
-            transition: all 0.2s ease-in-out;
-            border: 1px solid rgba(0,0,0,0.05); /* Subtle border for definition */
-            position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08); /* Initial shadow */
-            border-radius: 0.5rem; /* Equivalent to rounded-lg */
-            padding: 0.75rem; /* Adjusted padding for better multi-line text display (p-3) */
-            /* Removed white-space: nowrap; overflow: hidden; text-overflow: ellipsis; */
-            /* Allowing text to wrap, so no need for ellipsis */
-            display: flex; /* Use flex to center content */
-            align-items: center; /* Vertically center */
-            justify-content: center; /* Horizontally center */
-            text-align: center; /* Ensure text is centered within the block */
-            line-height: 1.3; /* Adjust line height for better readability of two lines */
-            min-height: 5rem; /* Set a minimum height to ensure consistent block size for two lines */
-        }
-        .router-block:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px rgba(0,0,0,0.15), 0 3px 5px rgba(0,0,0,0.1); /* Stronger shadow on hover */
-        }
-        .router-block:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05); /* Pressed effect */
-        }
-
-        /* Specific overrides for highlighted/selected states (stronger shadow and slight scale) */
-        .router-block.highlighted-red { /* For pendingSource/pendingDestination */
-            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4), 0 5px 10px rgba(239, 68, 68, 0.2);
-            transform: translateY(-2px) scale(1.02);
-            z-index: 10; /* Bring to front */
-        }
-        .router-block.highlighted-blue { /* For current destination of pending source */
-            box-shadow: 0 10px 20px rgba(96, 165, 250, 0.4), 0 5px 10px rgba(96, 165, 250, 0.2);
-            transform: translateY(-2px) scale(1.02);
-            z-index: 10;
-        }
-        .router-block.highlighted-purple { /* For source currently routed to selected destination */
-            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.4), 0 5px 10px rgba(168, 85, 247, 0.2);
-            transform: translateY(-2px) scale(1.02);
-            z-index: 10;
-        }
-
-        /* Disable scrolling */
-        #sourcesContainer, #destinationsContainer {
-            overflow-y: hidden; /* Disable vertical scrolling */
-            /* Adjusted height to accommodate taller 2-line blocks. */
-            /* 5rem (min-height) * 5 rows + 4 * 0.75rem (gap-3) = 25rem + 3rem = 28rem. 28rem * 16px/rem = 448px */
-            /* Adding a bit more for top/bottom container padding (p-2) */
-            height: 470px; /* Ensures 5 rows of items fit without scrolling */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>VigilSiddhi System Architecture</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #232526 0%, #414345 100%);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #20242c;
+      min-height: 100vh;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 45px auto 0 auto;
+      max-width: 1100px;
+      background: rgba(255,255,255,0.98);
+      border-radius: 18px;
+      box-shadow: 0 12px 36px #1d2231a9;
+      padding: 40px 30px 35px 30px;
+    }
+    h1 {
+      text-align: center;
+      color: #0d4a8d;
+      font-size: 2.15rem;
+      margin-bottom: 34px;
+      letter-spacing: 2px;
+      font-weight: 700;
+      text-shadow: 0 2px 8px #b0c7e2a5;
+    }
+    .diagram {
+      display: grid;
+      grid-template-columns: 220px 220px 220px;
+      grid-template-rows: 120px 120px 120px;
+      gap: 44px 40px;
+      position: relative;
+      min-width: 800px;
+      min-height: 390px;
+      justify-content: center;
+      align-items: center;
+    }
+    .block {
+      background: linear-gradient(120deg,#d1e9ff 0%,#9cc1ef 65%, #e3f0fd 100%);
+      border-radius: 18px;
+      box-shadow: 0 12px 32px #b6c7e8cc,0 2px 4px #3F5EFB22;
+      border: 3.5px solid #2b4865;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.18rem;
+      font-weight: 600;
+      min-height: 110px;
+      position: relative;
+      text-align: center;
+      perspective: 90px;
+      transition: transform 0.2s;
+      color: #163357;
+      /* 3D effect */
+      box-shadow:
+        0 4px 18px #2b486555,
+        0 1.5px 0 #4867aa inset,
+        0 6px 16px #9cc1ef44;
+    }
+    .block:before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0; top: 0;
+      border-radius: 18px;
+      background: linear-gradient(90deg,rgba(255,255,255,0.12),rgba(80,135,180,0.13));
+      pointer-events: none;
+      z-index: 2;
+    }
+    .block .fa {
+      font-size: 2.1rem;
+      margin-bottom: 7px;
+      color: #0ea5e9;
+      text-shadow: 0 2px 6px #c9e6fa78;
+    }
+    .block .label {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 4px;
+      color: #26517a;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 3px #e8f3fa66;
+    }
+    /* Arrows */
+    .arrow {
+      position: absolute;
+      z-index: 10;
+      width: 75px;
+      height: 7px;
+      background: transparent;
+    }
+    .arrow .arrow-line {
+      position: absolute;
+      height: 7px;
+      background: linear-gradient(90deg,#0ea5e9 70%,#2b4865 100%);
+      border-radius: 3.5px;
+      top: 0; left: 0;
+    }
+    .arrow .arrow-head {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 12px solid #0ea5e9;
+      top: -7px;
+      right: -9px;
+    }
+    /* Vertical Arrows */
+    .arrow-vert {
+      position: absolute;
+      width: 7px;
+      height: 56px;
+      background: transparent;
+      z-index: 10;
+    }
+    .arrow-vert .arrow-line {
+      position: absolute;
+      width: 7px;
+      height: 100%;
+      background: linear-gradient(180deg,#0ea5e9 70%,#2b4865 100%);
+      border-radius: 3.5px;
+      left: 0; top: 0;
+    }
+    .arrow-vert .arrow-head {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 14px solid #0ea5e9;
+      left: -4px;
+      bottom: -9px;
+    }
+    @media (max-width: 900px) {
+      .diagram {
+        min-width: 300px;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(7, 120px);
+        gap: 24px 0;
+      }
+      .arrow, .arrow-vert { display: none; }
+    }
+  </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 font-sans text-gray-900 flex flex-col items-center">
-
-    <div id="app" class="w-full max-w-6xl bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6">
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b pb-4 border-gray-200">
-            <h1 class="text-3xl font-extrabold text-blue-700 tracking-tight mb-2 md:mb-0">
-                Sirus Router Control Panel
-            </h1>
-            <div class="flex space-x-3 mt-4 md:mt-0">
-                <!-- Take Button -->
-                <button id="takeButton" class="flex items-center px-4 py-2 rounded-full font-medium shadow-md transition-all duration-300 transform">
-                    <i data-lucide="check" class="lucide lucide-check w-5 h-5 mr-2"></i>
-                    Take
-                </button>
-                <!-- Undo Button -->
-                <button id="undoButton" class="flex items-center px-4 py-2 rounded-full font-medium shadow-md transition-all duration-300 transform">
-                    <i data-lucide="history" class="lucide lucide-history w-5 h-5 mr-2"></i>
-                    Undo
-                </button>
-            </div>
-        </div>
-
-        <!-- Source and Destination Grids -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Sources Section -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-gray-800 text-center" id="sourcesHeader">Sources (Page: Tech)</h2>
-                <div id="sourcesContainer" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 p-2 bg-gray-50 rounded-lg shadow-inner">
-                    <!-- Source blocks will be injected here by JavaScript -->
-                </div>
-                <!-- Source Pagination Controls -->
-                <div class="flex justify-center items-center space-x-2 mt-4">
-                    <button id="prevPageButtonSource" class="p-2 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                        <i data-lucide="chevron-left" class="lucide lucide-chevron-left w-5 h-5"></i>
-                    </button>
-                    <div id="paginationButtonsSource" class="flex space-x-1">
-                        <!-- Pagination page buttons will be injected here -->
-                    </div>
-                    <button id="nextPageButtonSource" class="p-2 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                        <i data-lucide="chevron-right" class="lucide lucide-chevron-right w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Destinations Section -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-gray-800 text-center" id="destinationsHeader">Destinations (Page: Tech)</h2>
-                <div id="destinationsContainer" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 p-2 bg-gray-50 rounded-lg shadow-inner">
-                    <!-- Destination blocks will be injected here by JavaScript -->
-                </div>
-                <!-- Destination Pagination Controls -->
-                <div class="flex justify-center items-center space-x-2 mt-4">
-                    <button id="prevPageButtonDestination" class="p-2 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                        <i data-lucide="chevron-left" class="lucide lucide-chevron-left w-5 h-5"></i>
-                    </button>
-                    <div id="paginationButtonsDestination" class="flex space-x-1">
-                        <!-- Pagination page buttons will be injected here -->
-                    </div>
-                    <button id="nextPageButtonDestination" class="p-2 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                        <i data-lucide="chevron-right" class="lucide lucide-chevron-right w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Salvo Options Section -->
-        <div class="mt-8 pt-4 border-t border-gray-200 text-center">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Salvo Options</h2>
-            <div id="salvoButtonsContainer" class="flex flex-wrap justify-center gap-4">
-                <!-- Salvo buttons will be injected here -->
-            </div>
-        </div>
+<body>
+  <div class="container">
+    <h1>VigilSiddhi Architecture Diagram</h1>
+    <div class="diagram">
+      <!-- Row 1 -->
+      <div class="block" style="grid-column: 2 / 3; grid-row: 1 / 2;">
+        <i class="fa fa-desktop"></i>
+        <div>Frontend<br><span class="label">(main.py, Alarm Console)</span></div>
+      </div>
+      <div class="block" style="grid-column: 3 / 4; grid-row: 1 / 2;">
+        <i class="fa fa-database"></i>
+        <div>DB<br><span class="label">(Elasticsearch/SQL)</span></div>
+      </div>
+      <!-- Row 2 -->
+      <div class="block" style="grid-column: 1 / 2; grid-row: 2 / 3;">
+        <i class="fa fa-network-wired"></i>
+        <div>Poller Agents<br><span class="label">(SNMP, Website, Windows, etc.)</span></div>
+      </div>
+      <div class="block" style="grid-column: 2 / 3; grid-row: 2 / 3;">
+        <i class="fa fa-exchange-alt"></i>
+        <div>Event Bus<br><span class="label">(Queue/Redis Streams)</span></div>
+      </div>
+      <div class="block" style="grid-column: 3 / 4; grid-row: 2 / 3;">
+        <i class="fa fa-cogs"></i>
+        <div>Processor<br><span class="label">(event_processor.py)</span></div>
+      </div>
+      <!-- Row 3 -->
+      <div class="block" style="grid-column: 2 / 3; grid-row: 3 / 4;">
+        <i class="fa fa-memory"></i>
+        <div>In-Memory Cache<br><span class="label">(Redis/Hot State)</span></div>
+      </div>
+      <!-- Horizontal arrows -->
+      <!-- Poller Agents -> Event Bus -->
+      <div class="arrow" style="top: 177px; left: 175px;">
+        <div class="arrow-line" style="width: 75px;"></div>
+        <div class="arrow-head"></div>
+      </div>
+      <!-- Event Bus -> Processor -->
+      <div class="arrow" style="top: 177px; left: 435px;">
+        <div class="arrow-line" style="width: 75px;"></div>
+        <div class="arrow-head"></div>
+      </div>
+      <!-- Vertical arrows -->
+      <!-- Frontend -> DB -->
+      <div class="arrow" style="top: 65px; left: 415px; width: 105px;">
+        <div class="arrow-line" style="width: 105px;"></div>
+        <div class="arrow-head" style="right:-13px;"></div>
+      </div>
+      <!-- Processor -> DB -->
+      <div class="arrow-vert" style="top: 248px; left: 685px;">
+        <div class="arrow-line"></div>
+        <div class="arrow-head"></div>
+      </div>
+      <!-- Processor -> In-Memory Cache -->
+      <div class="arrow-vert" style="top: 248px; left: 505px;">
+        <div class="arrow-line"></div>
+        <div class="arrow-head"></div>
+      </div>
+      <!-- In-Memory Cache -> Frontend -->
+      <div class="arrow" style="top: 355px; left: 255px; width:180px;">
+        <div class="arrow-line" style="width: 180px;"></div>
+        <div class="arrow-head"></div>
+      </div>
+      <!-- Event Bus -> In-Memory Cache -->
+      <div class="arrow" style="top: 295px; left: 315px; width: 120px;transform: rotate(35deg);">
+        <div class="arrow-line" style="width: 120px;"></div>
+        <div class="arrow-head" style="right:-13px;"></div>
+      </div>
     </div>
-
-    <script>
-        // --- Global State Variables ---
-        let allSources = [];
-        let allDestinations = [];
-        let routingMap = new Map(); // Map<string, string> (Source -> Destination)
-        let history = []; // Stores snapshots of routingMap (as array of entries for serialization)
-
-        let currentPageSource = 1; // Current page for sources
-        const itemsPerPageSource = 25; // 25 sources per page (5 rows * 5 columns)
-
-        let currentPageDestination = 1; // Current page for destinations
-        const itemsPerPageDestination = 25; // 25 destinations per page (5 rows * 5 columns)
-
-        let pendingSource = null; // Source selected by user, awaiting 'Take'
-        let pendingDestination = null; // Destination selected by user, awaiting 'Take'
-
-        let lastButtonActionTime = 0; // Timestamp of last Take/Undo/Salvo button press
-        let buttonColorTimeoutId = null; // Holds setTimeout ID for button color reset
-
-        // Page names for pagination
-        const pageNames = ["Tech", "On Camera", "Edit Suite", "Control Room"];
-
-        // Define Salvo configurations
-        const salvos = [
-            {
-                name: "Salvo 1 (1:1)",
-                description: "Routes Source 1 to Dest 1, Source 2 to Dest 2, ..., Source 100 to Dest 100",
-                action: (sources, destinations) => {
-                    const routes = [];
-                    for (let i = 0; i < 100; i++) {
-                        if (sources[i] && destinations[i]) {
-                            routes.push({ source: sources[i], destination: destinations[i] });
-                        }
-                    }
-                    return routes;
-                }
-            },
-            {
-                name: "Salvo 2 (Reverse)",
-                description: "Routes Source 100 to Dest 1, Source 99 to Dest 2, and so on.",
-                action: (sources, destinations) => {
-                    const routes = [];
-                    const numSources = sources.length;
-                    const numDestinations = destinations.length;
-                    for (let i = 0; i < numSources; i++) {
-                        // Map Source[i] to Destination[numDestinations - 1 - i]
-                        // e.g., Source 1 (index 0) -> Destination 100 (index 99)
-                        // Source 100 (index 99) -> Destination 1 (index 0)
-                        const targetDestIndex = numDestinations - 1 - i;
-                        if (sources[i] && destinations[targetDestIndex]) {
-                            routes.push({ source: sources[i], destination: destinations[targetDestIndex] });
-                        }
-                    }
-                    return routes;
-                }
-            },
-            {
-                name: "Salvo 3 (Shifted)",
-                description: "Routes Source 1 to Dest 2, Source 2 to Dest 3, etc.",
-                action: (sources, destinations) => {
-                    const routes = [];
-                    for (let i = 0; i < 100; i++) {
-                        if (sources[i] && destinations[(i + 1) % 100]) { // Shift by 1, wrap around
-                            routes.push({ source: sources[i], destination: destinations[(i + 1) % 100] });
-                        }
-                    }
-                    return routes;
-                }
-            }
-        ];
-
-        // --- DOM Elements ---
-        const sourcesContainer = document.getElementById('sourcesContainer');
-        const destinationsContainer = document.getElementById('destinationsContainer');
-        const takeButton = document.getElementById('takeButton');
-        const undoButton = document.getElementById('undoButton');
-
-        const prevPageButtonSource = document.getElementById('prevPageButtonSource');
-        const nextPageButtonSource = document.getElementById('nextPageButtonSource');
-        const paginationButtonsSource = document.getElementById('paginationButtonsSource');
-        const sourcesHeader = document.getElementById('sourcesHeader');
-
-        const prevPageButtonDestination = document.getElementById('prevPageButtonDestination');
-        const nextPageButtonDestination = document.getElementById('nextPageButtonDestination');
-        const paginationButtonsDestination = document.getElementById('paginationButtonsDestination');
-        const destinationsHeader = document.getElementById('destinationsHeader');
-
-
-        const salvoButtonsContainer = document.getElementById('salvoButtonsContainer');
-
-        // --- Helper Functions ---
-
-        // Helper function to simulate an SNMP SET operation
-        function simulateSnmpSet(source, destination) {
-            console.log(`Simulating SNMP SET: Routing "${source}" to "${destination}"`);
-            // In a real application, you would make an API call to your backend
-            // which then communicates with the SNMP device.
-            // Example: fetch('/api/snmp-set', { method: 'POST', body: JSON.stringify({ source, destination }) });
-        }
-
-        // Determines the button color class based on the last action time
-        function getButtonColorClass() {
-            const isActive = (Date.now() - lastButtonActionTime) < 5000 && lastButtonActionTime > 0;
-            if (isActive) {
-                return 'bg-green-600 text-white';
-            }
-            return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200';
-        }
-
-        // Updates the class of a button based on its state (color and disabled)
-        function updateButtonClass(buttonElement, isDisabled) {
-            const baseClasses = 'flex items-center px-4 py-2 rounded-full font-medium shadow-md transition-all duration-300 transform';
-            const dynamicClasses = getButtonColorClass();
-            const disabledClasses = isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95';
-            buttonElement.className = `${baseClasses} ${dynamicClasses} ${disabledClasses}`;
-            buttonElement.disabled = isDisabled;
-        }
-
-        // Manages the 5-second button color timeout
-        function resetButtonColorTimeout() {
-            if (buttonColorTimeoutId) {
-                clearTimeout(buttonColorTimeoutId);
-            }
-            lastButtonActionTime = Date.now();
-            buttonColorTimeoutId = setTimeout(() => {
-                lastButtonActionTime = 0; // Reset after 5 seconds
-                updateUI(); // Re-render to update button colors
-            }, 5000); // 5 seconds
-        }
-
-        // --- Render Functions ---
-
-        function renderSources() {
-            sourcesContainer.innerHTML = ''; // Clear existing sources
-
-            const totalPagesSource = Math.ceil(allSources.length / itemsPerPageSource);
-            const startIndex = (currentPageSource - 1) * itemsPerPageSource;
-            const endIndex = startIndex + itemsPerPageSource;
-            const currentSources = allSources.slice(startIndex, endIndex);
-
-            sourcesHeader.textContent = `Sources (Page: ${pageNames[currentPageSource - 1] || `Page ${currentPageSource}`})`;
-
-            currentSources.forEach(source => {
-                const isHighlighted = source === pendingSource;
-                // Check if this source is currently routed to the selected pending destination
-                const isCurrentlyRoutingToSelectedDestination = pendingDestination && routingMap.get(source) === pendingDestination;
-
-                const blockDiv = document.createElement('div');
-                let blockClasses = `router-block cursor-pointer select-none`; // p-3 moved to CSS min-height/padding
-
-                if (isHighlighted) {
-                    blockClasses += ' bg-red-500 text-white highlighted-red';
-                } else if (isCurrentlyRoutingToSelectedDestination) {
-                    blockClasses += ' bg-purple-200 text-purple-800 border-2 border-purple-500 highlighted-purple';
-                } else {
-                    blockClasses += ' bg-green-100 text-green-800 hover:bg-green-200';
-                }
-
-                blockDiv.className = blockClasses;
-                blockDiv.textContent = source;
-                blockDiv.dataset.source = source; // Store source name for event handling
-                blockDiv.addEventListener('click', () => handleSourceClick(source));
-                sourcesContainer.appendChild(blockDiv);
-            });
-
-            // Update source pagination buttons
-            paginationButtonsSource.innerHTML = '';
-            for (let i = 1; i <= totalPagesSource; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.textContent = pageNames[i - 1] || `Page ${i}`;
-                pageButton.className = `px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                    currentPageSource === i
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`;
-                pageButton.addEventListener('click', () => goToPageSource(i));
-                paginationButtonsSource.appendChild(pageButton);
-            }
-
-            prevPageButtonSource.disabled = currentPageSource === 1;
-            nextPageButtonSource.disabled = currentPageSource === totalPagesSource;
-            prevPageButtonSource.classList.toggle('opacity-50', currentPageSource === 1);
-            prevPageButtonSource.classList.toggle('cursor-not-allowed', currentPageSource === 1);
-            nextPageButtonSource.classList.toggle('opacity-50', currentPageSource === totalPagesSource);
-            nextPageButtonSource.classList.toggle('cursor-not-allowed', currentPageSource === totalPagesSource);
-        }
-
-        function renderDestinations() {
-            destinationsContainer.innerHTML = ''; // Clear existing destinations
-
-            const totalPagesDestination = Math.ceil(allDestinations.length / itemsPerPageDestination);
-            const startIndex = (currentPageDestination - 1) * itemsPerPageDestination;
-            const endIndex = startIndex + itemsPerPageDestination;
-            const currentDestinations = allDestinations.slice(startIndex, endIndex);
-
-            destinationsHeader.textContent = `Destinations (Page: ${pageNames[currentPageDestination - 1] || `Page ${currentPageDestination}`})`;
-
-
-            currentDestinations.forEach(destination => {
-                const isHighlighted = destination === pendingDestination;
-                const isCurrentDestinationForPendingSource =
-                    pendingSource && routingMap.get(pendingSource) === destination && pendingDestination !== destination;
-
-                const blockDiv = document.createElement('div');
-                let blockClasses = `router-block cursor-pointer select-none`; // p-3 moved to CSS min-height/padding
-
-                if (isHighlighted) {
-                    blockClasses += ' bg-red-500 text-white highlighted-red';
-                } else if (isCurrentDestinationForPendingSource) {
-                    blockClasses += ' bg-blue-300 text-blue-900 border-2 border-blue-500 highlighted-blue';
-                } else {
-                    blockClasses += ' bg-orange-100 text-orange-800 hover:bg-orange-200';
-                }
-
-                blockDiv.className = blockClasses;
-                blockDiv.textContent = destination;
-                blockDiv.dataset.destination = destination; // Store destination name for event handling
-                blockDiv.addEventListener('click', () => handleDestinationClick(destination));
-                destinationsContainer.appendChild(blockDiv);
-            });
-
-            // Update destination pagination buttons
-            paginationButtonsDestination.innerHTML = '';
-            for (let i = 1; i <= totalPagesDestination; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.textContent = pageNames[i - 1] || `Page ${i}`;
-                pageButton.className = `px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                    currentPageDestination === i
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`;
-                pageButton.addEventListener('click', () => goToPageDestination(i));
-                paginationButtonsDestination.appendChild(pageButton);
-            }
-
-            prevPageButtonDestination.disabled = currentPageDestination === 1;
-            nextPageButtonDestination.disabled = totalPagesDestination === 0 || currentPageDestination === totalPagesDestination;
-            prevPageButtonDestination.classList.toggle('opacity-50', currentPageDestination === 1);
-            prevPageButtonDestination.classList.toggle('cursor-not-allowed', currentPageDestination === 1);
-            nextPageButtonDestination.classList.toggle('opacity-50', totalPagesDestination === 0 || currentPageDestination === totalPagesDestination);
-            nextPageButtonDestination.classList.toggle('cursor-not-allowed', totalPagesDestination === 0 || currentPageDestination === totalPagesDestination);
-        }
-
-        function renderSalvoButtons() {
-            salvoButtonsContainer.innerHTML = '';
-            salvos.forEach((salvo, index) => {
-                const button = document.createElement('button');
-                button.textContent = salvo.name;
-                button.title = salvo.description;
-                button.className = `flex-1 min-w-[150px] md:flex-none px-6 py-3 rounded-full font-medium shadow-md transition-all duration-300 transform ${getButtonColorClass()} hover:scale-105 active:scale-95`;
-                button.addEventListener('click', () => handleSalvo(salvo.action));
-                salvoButtonsContainer.appendChild(button);
-            });
-        }
-
-        // Central UI update function
-        function updateUI() {
-            renderSources();
-            renderDestinations();
-
-            const isUndoDisabled = history.length === 0 && (Date.now() - lastButtonActionTime) >= 5000;
-            const isTakeDisabled = !pendingSource || !pendingDestination;
-
-            updateButtonClass(takeButton, isTakeDisabled);
-            updateButtonClass(undoButton, isUndoDisabled);
-
-            renderSalvoButtons(); // Re-render salvo buttons to update their color
-            lucide.createIcons(); // Re-render Lucide icons if any new elements are added
-        }
-
-        // --- Event Handlers ---
-
-        function handleSourceClick(source) {
-            pendingSource = source;
-            // pendingDestination is NOT cleared here, allowing flexible selection order
-            resetButtonColorTimeout();
-            console.log(`Source selected: ${source}`);
-            updateUI();
-        }
-
-        function handleDestinationClick(destination) {
-            pendingDestination = destination;
-            resetButtonColorTimeout();
-            console.log(`Destination selected: ${destination}`);
-
-            // Find the source currently routed to the selected destination
-            let sourceRoutedToDest = null;
-            for (let [src, dest] of routingMap.entries()) {
-                if (dest === destination) {
-                    sourceRoutedToDest = src;
-                    break;
-                }
-            }
-
-            // If a source is found, navigate to its page
-            if (sourceRoutedToDest) {
-                const sourceIndex = allSources.indexOf(sourceRoutedToDest);
-                if (sourceIndex !== -1) {
-                    const pageForSource = Math.ceil((sourceIndex + 1) / itemsPerPageSource);
-                    if (currentPageSource !== pageForSource) {
-                        currentPageSource = pageForSource;
-                        // Do NOT clear pendingSource here, as the user might want to Take it.
-                    }
-                }
-            }
-            updateUI();
-        }
-
-        function handleTake() {
-            if (pendingSource && pendingDestination) {
-                // Save current routing map to history before updating
-                history.push(Array.from(routingMap.entries()));
-
-                // Ensure only one source routes to pendingDestination
-                // Find any existing source that maps to pendingDestination
-                let oldSourceMappedToDest = null;
-                for (let [src, dest] of routingMap.entries()) {
-                    if (dest === pendingDestination) {
-                        oldSourceMappedToDest = src;
-                        break;
-                    }
-                }
-                // If found, remove the old mapping
-                if (oldSourceMappedToDest) {
-                    routingMap.delete(oldSourceMappedToDest);
-                    console.log(`Removed old mapping: ${oldSourceMappedToDest} -> ${pendingDestination}`);
-                }
-
-                // Update routing map with new pendingSource -> pendingDestination
-                routingMap.set(pendingSource, pendingDestination);
-                simulateSnmpSet(pendingSource, pendingDestination);
-
-                // Clear pending selections after "Take"
-                pendingSource = null;
-                pendingDestination = null;
-                resetButtonColorTimeout();
-                console.log("Take action performed. Configuration applied.");
-                updateUI();
-            } else {
-                console.log("Please select both a source and a destination before taking.");
-            }
-        }
-
-        function handleUndo() {
-            if (history.length > 0) {
-                const previousStateEntries = history.pop(); // Remove last history item
-                routingMap = new Map(previousStateEntries);
-
-                pendingSource = null; // Clear pending selections on undo
-                pendingDestination = null; // Clear pending selections on undo
-                resetButtonColorTimeout();
-                console.log("Undo action performed. Reverted to previous routing state.");
-                updateUI();
-            }
-        }
-
-        function handleSalvo(salvoAction) {
-            // Save current routing map to history before applying salvo
-            history.push(Array.from(routingMap.entries()));
-
-            const routesToApply = salvoAction(allSources, allDestinations);
-
-            // Create a temporary map to build the new routing, respecting the "one dest, one source" rule
-            const tempRoutingMap = new Map(routingMap); // Start with current state
-
-            routesToApply.forEach(({ source, destination }) => {
-                // Before setting, check if the destination already exists in tempRoutingMap's values
-                // If it does, find the source currently mapped to it and remove that old mapping
-                let oldSourceMappedToThisDest = null;
-                for (let [src, dest] of tempRoutingMap.entries()) {
-                    if (dest === destination) {
-                        oldSourceMappedToThisDest = src;
-                        break;
-                    }
-                }
-                if (oldSourceMappedToThisDest) {
-                    tempRoutingMap.delete(oldSourceMappedToThisDest);
-                    console.log(`Salvo removed old mapping: ${oldSourceMappedToThisDest} -> ${destination}`);
-                }
-                tempRoutingMap.set(source, destination);
-                simulateSnmpSet(source, destination); // Simulate individual SNMP SETs
-            });
-
-            routingMap = tempRoutingMap; // Apply the new, cleaned map
-            pendingSource = null; // Clear any pending selections
-            pendingDestination = null; // Clear any pending selections
-            resetButtonColorTimeout();
-            console.log("Salvo applied.");
-            updateUI();
-        }
-
-        // Pagination handlers for Sources
-        function goToNextPageSource() {
-            const totalPagesSource = Math.ceil(allSources.length / itemsPerPageSource);
-            if (currentPageSource < totalPagesSource) {
-                currentPageSource++;
-                pendingSource = null; // Clear source selection on page change
-                updateUI();
-            }
-        }
-
-        function goToPreviousPageSource() {
-            if (currentPageSource > 1) {
-                currentPageSource--;
-                pendingSource = null; // Clear source selection on page change
-                updateUI();
-            }
-        }
-
-        function goToPageSource(pageNumber) {
-            const totalPagesSource = Math.ceil(allSources.length / itemsPerPageSource);
-            if (pageNumber >= 1 && pageNumber <= totalPagesSource) {
-                currentPageSource = pageNumber;
-                pendingSource = null; // Clear source selection on page change
-                updateUI();
-            }
-        }
-
-        // Pagination handlers for Destinations
-        function goToNextPageDestination() {
-            const totalPagesDestination = Math.ceil(allDestinations.length / itemsPerPageDestination);
-            if (currentPageDestination < totalPagesDestination) {
-                currentPageDestination++;
-                pendingDestination = null; // Clear destination selection on page change
-                updateUI();
-            }
-        }
-
-        function goToPreviousPageDestination() {
-            if (currentPageDestination > 1) {
-                currentPageDestination--;
-                pendingDestination = null; // Clear destination selection on page change
-                updateUI();
-            }
-        }
-
-        function goToPageDestination(pageNumber) {
-            const totalPagesDestination = Math.ceil(allDestinations.length / itemsPerPageDestination);
-            if (pageNumber >= 1 && pageNumber <= totalPagesDestination) {
-                currentPageDestination = pageNumber;
-                pendingDestination = null; // Clear destination selection on page change
-                updateUI();
-            }
-        }
-
-
-        // --- Initialization ---
-        function initApp() {
-            // Initialize sources and destinations
-            allSources = Array.from({ length: 100 }, (_, i) => `Source ${i + 1}`);
-            allDestinations = Array.from({ length: 100 }, (_, i) => `Destination ${i + 1}`);
-
-            // Initialize routing map: each source routed to its corresponding destination by default
-            allSources.forEach((src, index) => {
-                routingMap.set(src, allDestinations[index] || src); // Default route Source N to Destination N
-            });
-
-            // Attach event listeners to fixed buttons
-            takeButton.addEventListener('click', handleTake);
-            undoButton.addEventListener('click', handleUndo);
-
-            prevPageButtonSource.addEventListener('click', goToPreviousPageSource);
-            nextPageButtonSource.addEventListener('click', goToNextPageSource);
-            prevPageButtonDestination.addEventListener('click', goToPreviousPageDestination);
-            nextPageButtonDestination.addEventListener('click', goToNextPageDestination);
-
-
-            // Initial UI render
-            updateUI();
-        }
-
-        // Run initialization when the window loads
-        window.onload = initApp;
-    </script>
+    <div style="margin-top:40px;font-size:1.1rem;color:#13427c;padding:20px 10px 0 10px;">
+      <strong>Legend:</strong> <br>
+      <span style="color:#0ea5e9;font-weight:600;">Directional arrows</span> show core data flows:<br>
+      <ul>
+        <li><b>Poller Agents</b> send data/events to <b>Event Bus</b> (Queue).</li>
+        <li><b>Event Bus</b> streams to <b>Processor</b> (event_processor.py logic).</li>
+        <li><b>Processor</b> writes to both <b>DB</b> (Elasticsearch/SQL) and <b>In-Memory Cache</b> (for real-time state).</li>
+        <li><b>Frontend</b> (main.py, Alarm Console) queries <b>DB</b> for config/history and subscribes to <b>In-Memory Cache</b> for fast alarm/status updates.</li>
+      </ul>
+      <span style="font-size:1rem;color:#0d2c4d;">All blocks and arrows are named per your codebase for immediate implementation mapping.<br>Diagram is square/compact for easy system overview.</span>
+    </div>
+  </div>
 </body>
 </html>
-
