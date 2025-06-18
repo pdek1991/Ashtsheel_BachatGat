@@ -1,177 +1,397 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Server Group Status Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Custom styles for Inter font */
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    /* Common styling for the large status blocks within each group */
-    .large-status-block {
-      @apply rounded-lg p-2 text-center text-white font-bold text-lg flex items-center justify-center flex-grow;
-      min-height: 6rem; /* Ensure minimum height for visibility */
-    }
-    /* Common styling for smaller sub-blocks */
-    .sub-block {
-      @apply rounded-md p-2 text-center text-sm font-medium text-white flex items-center justify-center; /* Added flex for centering text */
-      min-height: 3rem; /* Ensure minimum height for visibility */
-    }
-  </style>
-</head>
-<body class="bg-black text-white p-6 min-h-screen flex flex-col items-center">
-  <h1 class="text-2xl sm:text-3xl lg:text-4xl text-center font-bold mb-6">Server Group Dashboard</h1>
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, History, Check } from 'lucide-react'; // Using lucide-react for icons
 
-  <button
-    id="simulateButton"
-    class="mb-8 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
-  >
-    Simulate Status Change
-  </button>
+// Helper function to simulate an SNMP SET operation
+const simulateSnmpSet = (source, destination) => {
+  console.log(`Simulating SNMP SET: Routing "${source}" to "${destination}"`);
+  // In a real application, you would make an API call to your backend
+  // which then communicates with the SNMP device.
+  // Example: fetch('/api/snmp-set', { method: 'POST', body: JSON.stringify({ source, destination }) });
+};
 
-  <div id="dashboardGrid" class="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+// Component for a single Source Block
+const SourceBlock = ({ source, onClick, isHighlighted, isCurrentlyRoutingToSelectedDestination }) => {
+  let blockClasses = `p-3 rounded-lg text-center font-medium transition-colors duration-200 cursor-pointer select-none`;
+
+  if (isHighlighted) {
+    // Red if this is the currently selected pending source
+    blockClasses += ' bg-red-500 text-white shadow-lg';
+  } else if (isCurrentlyRoutingToSelectedDestination) {
+    // Purple if this source is currently routed to the selected pending destination
+    blockClasses += ' bg-purple-200 text-purple-800 border-2 border-purple-500 shadow-md';
+  } else {
+    // Default green
+    blockClasses += ' bg-green-100 text-green-800 hover:bg-green-200';
+  }
+
+  return (
+    <div className={blockClasses} onClick={() => onClick(source)}>
+      {source}
     </div>
+  );
+};
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const dashboardGrid = document.getElementById('dashboardGrid');
-      const simulateButton = document.getElementById('simulateButton');
-      const numberOfGroups = 50;
-      let serverGroups = []; // Array to hold data for all server groups
+// Component for a single Destination Block
+const DestinationBlock = ({ destination, onClick, isHighlighted, isCurrentDestinationForPendingSource }) => {
+  let blockClasses = `p-3 rounded-lg text-center font-medium transition-colors duration-200 cursor-pointer select-none`;
 
-      // Function to get a random status (green, yellow, or red)
-      function getRandomStatus() {
-        const statuses = ['green', 'yellow', 'red'];
-        return statuses[Math.floor(Math.random() * statuses.length)];
-      }
+  if (isHighlighted) {
+    // Red if this is the currently selected pending destination
+    blockClasses += ' bg-red-500 text-white shadow-lg';
+  } else if (isCurrentDestinationForPendingSource) {
+    // Blue if it's the currently routed destination for the selected pending source
+    blockClasses += ' bg-blue-300 text-blue-900 shadow-md border-2 border-blue-500';
+  } else {
+    // Default orange
+    blockClasses += ' bg-orange-100 text-orange-800 hover:bg-orange-200';
+  }
 
-      // Function to get Tailwind CSS class based on status
-      function getStatusColorClass(status) {
-        switch (status) {
-          case 'green':
-            return 'bg-green-500';
-          case 'yellow':
-            return 'bg-yellow-500';
-          case 'red':
-            return 'bg-red-500';
-          default:
-            return 'bg-gray-700'; // Default for unknown status or initial state
+  return (
+    <div className={blockClasses} onClick={() => onClick(destination)}>
+      {destination}
+    </div>
+  );
+};
+
+// Main App Component
+export default function App() {
+  const [allSources, setAllSources] = useState([]);
+  const [allDestinations, setAllDestinations] = useState([]);
+  const [routingMap, setRoutingMap] = useState(new Map()); // Map<string, string> (Source -> Destination)
+  const [history, setHistory] = useState([]); // Stores snapshots of routingMap (as plain objects)
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25; // 25 sources per page
+
+  const [pendingSource, setPendingSource] = useState(null); // Source selected by user, awaiting 'Take'
+  const [pendingDestination, setPendingDestination] = useState(null); // Destination selected by user, awaiting 'Take'
+
+  const [lastButtonActionTime, setLastButtonActionTime] = useState(0); // Timestamp of last Take/Undo/Salvo button press
+  const buttonColorTimeoutRef = useRef(null); // Ref for button color timeout
+
+  // Page names for pagination
+  const pageNames = ["Tech", "On Camera", "Edit Suite", "Control Room"];
+
+  // Define Salvo configurations
+  const salvos = [
+    {
+      name: "Salvo 1 (1:1)",
+      description: "Routes Source 1 to Dest 1, Source 2 to Dest 2, ..., Source 100 to Dest 100",
+      action: (sources, destinations) => {
+        const routes = [];
+        for (let i = 0; i < 100; i++) {
+          if (sources[i] && destinations[i]) {
+            routes.push({ source: sources[i], destination: destinations[i] });
+          }
         }
+        return routes;
       }
-
-      // Function to initialize server group data
-      function initializeServerGroups() {
-        serverGroups = Array.from({ length: numberOfGroups }, (_, i) => ({
-          id: i + 1,
-          mainTitle: `Server Group ${i + 1} - MAX USA HD`,
-          alarms: 0, // Placeholder for alarms
-          // Status for the two main large blocks within each group
-          status1: 'green',
-          status2: 'green',
-          // Statuses for all other sub-blocks
-          vsMStatus: 'green',
-          vsPStatus: 'green',
-          vsBStatus: 'green',
-          daMStatus: 'green',
-          daPStatus: 'green',
-          daBStatus: 'green',
-          daMOutStatus: 'green',
-          daBOutStatus: 'green',
-        }));
-        renderServerGroups();
+    },
+    {
+      name: "Salvo 2 (Reverse)",
+      description: "Routes Source 100 to Dest 1, Source 99 to Dest 2, and so on.",
+      action: (sources, destinations) => {
+        const routes = [];
+        const numSources = sources.length;
+        const numDestinations = destinations.length;
+        for (let i = 0; i < numSources; i++) {
+          // Map Source[i] to Destination[numDestinations - 1 - i]
+          // e.g., Source 1 (index 0) -> Destination 100 (index 99)
+          // Source 100 (index 99) -> Destination 1 (index 0)
+          const targetDestIndex = numDestinations - 1 - i;
+          if (sources[i] && destinations[targetDestIndex]) {
+            routes.push({ source: sources[i], destination: destinations[targetDestIndex] });
+          }
+        }
+        return routes;
       }
-
-      // Function to generate HTML for a single server group
-      function createServerGroupHTML(group) {
-        const groupElement = document.createElement('div');
-        groupElement.className = 'bg-gray-800 rounded-lg shadow-xl p-4 flex flex-col border border-gray-700';
-        groupElement.innerHTML = `
-          <div class="flex justify-between items-center mb-4">
-            <div class="text-lg font-semibold text-gray-100">${group.mainTitle}</div>
-            <div class="text-red-400 font-bold">${group.alarms} ALARMS</div>
-          </div>
-
-          <div class="grid grid-cols-4 gap-2 flex-grow">
-            <div class="flex flex-col justify-between">
-              <div class="sub-block ${getStatusColorClass(group.vsMStatus)}">VS M</div>
-              <div class="sub-block ${getStatusColorClass(group.vsPStatus)}">VS P</div>
-              <div class="sub-block ${getStatusColorClass(group.vsBStatus)}">VS B</div>
-            </div>
-
-            <div class="flex flex-col justify-between">
-              <div class="sub-block ${getStatusColorClass(group.daMStatus)}">DA M</div>
-              <div class="sub-block ${getStatusColorClass(group.daPStatus)}">DA P</div>
-              <div class="sub-block ${getStatusColorClass(group.daBStatus)}">DA B</div>
-            </div>
-
-            <div class="col-span-1 flex flex-col justify-between">
-              <div class="large-status-block ${getStatusColorClass(group.status1)}">
-                ${group.id * 10 + 86}-11 <br/> VS${group.id}M
-              </div>
-              <div class="large-status-block ${getStatusColorClass(group.status2)}">
-                ${group.id * 10 + 402}-11 <br/> PGM${group.id}M
-              </div>
-            </div>
-
-            <div class="flex flex-col justify-between">
-              <div class="sub-block ${getStatusColorClass(group.daMOutStatus)}">DA M OUT</div>
-              <div class="flex-grow"></div>
-              <div class="sub-block ${getStatusColorClass(group.daBOutStatus)}">DA B OUT</div>
-            </div>
-          </div>
-        `;
-        return groupElement;
+    },
+    {
+      name: "Salvo 3 (Shifted)",
+      description: "Routes Source 1 to Dest 2, Source 2 to Dest 3, etc.",
+      action: (sources, destinations) => {
+        const routes = [];
+        for (let i = 0; i < 100; i++) {
+          if (sources[i] && destinations[(i + 1) % 100]) { // Shift by 1, wrap around
+            routes.push({ source: sources[i], destination: destinations[(i + 1) % 100] });
+          }
+        }
+        return routes;
       }
+    }
+  ];
 
-      // Function to render all server groups to the DOM
-      function renderServerGroups() {
-        dashboardGrid.innerHTML = ''; // Clear existing groups
-        serverGroups.forEach(group => {
-          dashboardGrid.appendChild(createServerGroupHTML(group));
-        });
-      }
+  // Initialize sources and destinations on component mount
+  useEffect(() => {
+    const generatedSources = Array.from({ length: 100 }, (_, i) => `Source ${i + 1}`);
+    const generatedDestinations = Array.from({ length: 100 }, (_, i) => `Destination ${i + 1}`);
+    setAllSources(generatedSources);
+    setAllDestinations(generatedDestinations);
 
-      // Function to simulate random status changes for all blocks
-      simulateButton.addEventListener('click', () => {
-        serverGroups = serverGroups.map(group => {
-          // Update status for the two main large blocks
-          let newStatus1 = Math.random() < 0.2 ? getRandomStatus() : group.status1;
-          let newStatus2 = Math.random() < 0.2 ? getRandomStatus() : group.status2;
-
-          // Update status for all other sub-blocks
-          let newVsMStatus = Math.random() < 0.2 ? getRandomStatus() : group.vsMStatus;
-          let newVsPStatus = Math.random() < 0.2 ? getRandomStatus() : group.vsPStatus;
-          let newVsBStatus = Math.random() < 0.2 ? getRandomStatus() : group.vsBStatus;
-          let newDaMStatus = Math.random() < 0.2 ? getRandomStatus() : group.daMStatus;
-          let newDaPStatus = Math.random() < 0.2 ? getRandomStatus() : group.daPStatus;
-          let newDaBStatus = Math.random() < 0.2 ? getRandomStatus() : group.daBStatus;
-          let newDaMOutStatus = Math.random() < 0.2 ? getRandomStatus() : group.daMOutStatus;
-          let newDaBOutStatus = Math.random() < 0.2 ? getRandomStatus() : group.daBOutStatus;
-
-          return {
-            ...group,
-            status1: newStatus1,
-            status2: newStatus2,
-            vsMStatus: newVsMStatus,
-            vsPStatus: newVsPStatus,
-            vsBStatus: newVsBStatus,
-            daMStatus: newDaMStatus,
-            daPStatus: newDaPStatus,
-            daBStatus: newDaBStatus,
-            daMOutStatus: newDaMOutStatus,
-            daBOutStatus: newDaBOutStatus,
-          };
-        });
-        renderServerGroups(); // Re-render the groups with updated statuses
-      });
-
-      // Initialize server groups on page load
-      initializeServerGroups();
+    // Initialize routing map: each source routed to its corresponding destination by default
+    const initialRouting = new Map();
+    generatedSources.forEach((src, index) => {
+      initialRouting.set(src, generatedDestinations[index] || src); // Default route Source N to Destination N
     });
-  </script>
-</body>
-</html>
+    setRoutingMap(initialRouting);
+  }, []);
 
+  // Effect to manage the 5-second button color timeout
+  useEffect(() => {
+    if (buttonColorTimeoutRef.current) {
+      clearTimeout(buttonColorTimeoutRef.current);
+    }
+
+    if (lastButtonActionTime > 0) {
+      buttonColorTimeoutRef.current = setTimeout(() => {
+        setLastButtonActionTime(0); // Reset after 5 seconds
+      }, 5000); // 5 seconds
+    }
+
+    // Cleanup on unmount or if lastButtonActionTime changes
+    return () => {
+      if (buttonColorTimeoutRef.current) {
+        clearTimeout(buttonColorTimeoutRef.current);
+      }
+    };
+  }, [lastButtonActionTime]);
+
+  // Handle click on a Source block
+  const handleSourceClick = useCallback((source) => {
+    setPendingSource(source);
+    // IMPORTANT CHANGE: Removed setPendingDestination(null) here
+    // This allows the user to select a destination first, then change the source
+    setLastButtonActionTime(Date.now()); // Reset button color timer on any selection
+    console.log(`Source selected: ${source}`);
+  }, []);
+
+  // Handle click on a Destination block
+  const handleDestinationClick = useCallback((destination) => {
+    setPendingDestination(destination);
+    setLastButtonActionTime(Date.now()); // Reset button color timer on any selection
+    console.log(`Destination selected: ${destination}`);
+  }, []);
+
+  // Handle "Take" (submit) functionality
+  const handleTake = useCallback(() => {
+    if (pendingSource && pendingDestination) {
+      // Save current routing map to history before updating
+      setHistory(prevHistory => [...prevHistory, Array.from(routingMap.entries())]); // Store as array of entries for serialization
+
+      // Update routing map
+      const newRoutingMap = new Map(routingMap);
+      newRoutingMap.set(pendingSource, pendingDestination);
+      setRoutingMap(newRoutingMap);
+
+      simulateSnmpSet(pendingSource, pendingDestination);
+
+      // Clear pending selections after "Take"
+      setPendingSource(null);
+      setPendingDestination(null);
+      setLastButtonActionTime(Date.now()); // Update timestamp for button color
+      console.log("Take action performed. Configuration applied.");
+    } else {
+      console.log("Please select both a source and a destination before taking.");
+    }
+  }, [pendingSource, pendingDestination, routingMap, history]);
+
+  // Handle undo functionality
+  const handleUndo = useCallback(() => {
+    if (history.length > 0) {
+      const previousStateEntries = history[history.length - 1];
+      const previousMap = new Map(previousStateEntries);
+      setHistory(prevHistory => prevHistory.slice(0, prevHistory.length - 1)); // Remove last history item
+      setRoutingMap(previousMap);
+
+      setPendingSource(null); // Clear pending selections on undo
+      setPendingDestination(null); // Clear pending selections on undo
+      setLastButtonActionTime(Date.now()); // Update timestamp for button color
+      console.log("Undo action performed. Reverted to previous routing state.");
+    }
+  }, [history]);
+
+  // Handle Salvo execution
+  const handleSalvo = useCallback((salvoAction) => {
+    // Save current routing map to history before applying salvo
+    setHistory(prevHistory => [...prevHistory, Array.from(routingMap.entries())]);
+
+    const newRoutingMap = new Map(routingMap);
+    const routesToApply = salvoAction(allSources, allDestinations);
+
+    routesToApply.forEach(({ source, destination }) => {
+      newRoutingMap.set(source, destination);
+      simulateSnmpSet(source, destination); // Simulate individual SNMP SETs
+    });
+
+    setRoutingMap(newRoutingMap);
+    setPendingSource(null); // Clear any pending selections
+    setPendingDestination(null); // Clear any pending selections
+    setLastButtonActionTime(Date.now()); // Reset button color timer
+    console.log("Salvo applied.");
+  }, [allSources, allDestinations, routingMap]);
+
+  // Pagination logic for sources
+  const totalPages = Math.ceil(allSources.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentSources = allSources.slice(startIndex, endIndex);
+
+  const goToNextPage = () => {
+    setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages));
+    setPendingSource(null); // Clear selection on page change
+    setPendingDestination(null); // Clear selection on page change
+  };
+
+  const goToPreviousPage = () => {
+    setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
+    setPendingSource(null); // Clear selection on page change
+    setPendingDestination(null); // Clear selection on page change
+  };
+
+  const goToPage = (pageNumber) => {
+    setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
+    setPendingSource(null); // Clear selection on page change
+    setPendingDestination(null); // Clear selection on page change
+  };
+
+  // Determine button color
+  const getButtonColorClass = () => {
+    // Timeout is now 5 seconds (5000 ms)
+    const isActive = (Date.now() - lastButtonActionTime) < 5000 && lastButtonActionTime > 0;
+    if (isActive) {
+      return 'bg-green-600 text-white';
+    }
+    return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200';
+  };
+
+  // Determine if Undo button should be disabled
+  const isUndoDisabled = history.length === 0 && (Date.now() - lastButtonActionTime) >= 5000;
+  // Determine if Take button should be disabled
+  const isTakeDisabled = !pendingSource || !pendingDestination;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 font-inter text-gray-900 flex flex-col items-center">
+      <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b pb-4 border-gray-200">
+          <h1 className="text-3xl font-extrabold text-blue-700 tracking-tight mb-2 md:mb-0">
+            Situs Router Control Panel
+          </h1>
+          <div className="flex space-x-3 mt-4 md:mt-0">
+            {/* Take Button */}
+            <button
+              onClick={handleTake}
+              disabled={isTakeDisabled}
+              className={`flex items-center px-4 py-2 rounded-full font-medium shadow-md transition-all duration-300 transform ${getButtonColorClass()} ${
+                isTakeDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+              }`}
+            >
+              <Check className="w-5 h-5 mr-2" />
+              Take
+            </button>
+            {/* Undo Button */}
+            <button
+              onClick={handleUndo}
+              disabled={isUndoDisabled}
+              className={`flex items-center px-4 py-2 rounded-full font-medium shadow-md transition-all duration-300 transform ${getButtonColorClass()} ${
+                isUndoDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+              }`}
+            >
+              <History className="w-5 h-5 mr-2" />
+              Undo
+            </button>
+          </div>
+        </div>
+
+        {/* Source and Destination Grids */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Sources Section */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800 text-center">Sources (Page: {pageNames[currentPage - 1]})</h2>
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 p-2 bg-gray-50 rounded-lg shadow-inner max-h-80 overflow-y-auto">
+              {currentSources.map((source) => (
+                <SourceBlock
+                  key={source}
+                  source={source}
+                  onClick={handleSourceClick}
+                  isHighlighted={source === pendingSource}
+                  // Highlight source if a destination is selected AND this source is currently routed to that destination
+                  isCurrentlyRoutingToSelectedDestination={pendingDestination && routingMap.get(source) === pendingDestination}
+                />
+              ))}
+            </div>
+            {/* Source Pagination Controls */}
+            <div className="flex justify-center items-center space-x-2 mt-4">
+              <button
+                onClick={goToPreviousPage}
+                disabled={currentPage === 1}
+                className="p-2 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <div className="flex space-x-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => goToPage(page)}
+                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                      currentPage === page
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    {pageNames[page - 1]}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Destinations Section */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800 text-center">Destinations</h2>
+            <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-10 gap-3 p-2 bg-gray-50 rounded-lg shadow-inner max-h-80 overflow-y-auto">
+              {allDestinations.map((destination) => (
+                <DestinationBlock
+                  key={destination}
+                  destination={destination}
+                  onClick={handleDestinationClick}
+                  isHighlighted={destination === pendingDestination}
+                  // Only highlight if there's a pending source and this is its *current* destination,
+                  // but not if this destination is also the *pending* selection itself.
+                  isCurrentDestinationForPendingSource={
+                    pendingSource && routingMap.get(pendingSource) === destination && pendingDestination !== destination
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Salvo Options Section */}
+        <div className="mt-8 pt-4 border-t border-gray-200 text-center">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Salvo Options</h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            {salvos.map((salvo, index) => (
+              <button
+                key={index}
+                onClick={() => handleSalvo(salvo.action)}
+                className={`flex-1 min-w-[150px] md:flex-none px-6 py-3 rounded-full font-medium shadow-md transition-all duration-300 transform ${getButtonColorClass()} hover:scale-105 active:scale-95`}
+                title={salvo.description}
+              >
+                {salvo.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
