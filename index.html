@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sirus Router Control Panel</title>
+    <title>Situs Router Control Panel</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons CDN -->
@@ -22,20 +22,53 @@
         .lucide-history { width: 1.25rem; height: 1.25rem; } /* w-5 h-5 */
         .lucide-chevron-left, .lucide-chevron-right { width: 1.25rem; height: 1.25rem; } /* w-5 h-5 */
 
-        /* Override default scrollbar styles if needed for aesthetics */
-        .max-h-80::-webkit-scrollbar, .max-h-60::-webkit-scrollbar {
-            width: 8px;
+        /* Custom styles for 3D-like blocks */
+        .router-block {
+            transition: all 0.2s ease-in-out;
+            border: 1px solid rgba(0,0,0,0.05); /* Subtle border for definition */
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08); /* Initial shadow */
+            border-radius: 0.5rem; /* Equivalent to rounded-lg */
         }
-        .max-h-80::-webkit-scrollbar-track, .max-h-60::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
+        .router-block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.15), 0 3px 5px rgba(0,0,0,0.1); /* Stronger shadow on hover */
         }
-        .max-h-80::-webkit-scrollbar-thumb, .max-h-60::-webkit-scrollbar-thumb {
-            background: #cbd5e1; /* Tailwind gray-300 */
-            border-radius: 10px;
+        .router-block:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05); /* Pressed effect */
         }
-        .max-h-80::-webkit-scrollbar-thumb:hover, .max-h-60::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; /* Tailwind gray-400 */
+
+        /* Specific overrides for highlighted/selected states (stronger shadow and slight scale) */
+        .router-block.highlighted-red { /* For pendingSource/pendingDestination */
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4), 0 5px 10px rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px) scale(1.02);
+            z-index: 10; /* Bring to front */
+        }
+        .router-block.highlighted-blue { /* For current destination of pending source */
+            box-shadow: 0 10px 20px rgba(96, 165, 250, 0.4), 0 5px 10px rgba(96, 165, 250, 0.2);
+            transform: translateY(-2px) scale(1.02);
+            z-index: 10;
+        }
+        .router-block.highlighted-purple { /* For source currently routed to selected destination */
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.4), 0 5px 10px rgba(168, 85, 247, 0.2);
+            transform: translateY(-2px) scale(1.02);
+            z-index: 10;
+        }
+
+        /* Disable scrolling */
+        #sourcesContainer, #destinationsContainer {
+            overflow-y: hidden; /* Disable vertical scrolling */
+            /* Ensure enough height to fit all elements without scrollbar appearing */
+            /* This height is calculated based on 5 rows of elements with typical padding/gap */
+            height: 280px; /* Adjusted height for 5 rows of items + padding/gap */
+        }
+
+        /* Adjustments for destination block text to fit better */
+        #destinationsContainer > div {
+            white-space: nowrap; /* Prevent text wrapping */
+            overflow: hidden;    /* Hide overflowing text */
+            text-overflow: ellipsis; /* Add ellipsis for overflow */
         }
     </style>
 </head>
@@ -45,7 +78,7 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b pb-4 border-gray-200">
             <h1 class="text-3xl font-extrabold text-blue-700 tracking-tight mb-2 md:mb-0">
-                Sirus Router Control Panel
+                Situs Router Control Panel
             </h1>
             <div class="flex space-x-3 mt-4 md:mt-0">
                 <!-- Take Button -->
@@ -66,7 +99,7 @@
             <!-- Sources Section -->
             <div class="space-y-4">
                 <h2 class="text-xl font-semibold text-gray-800 text-center" id="sourcesHeader">Sources (Page: Tech)</h2>
-                <div id="sourcesContainer" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 p-2 bg-gray-50 rounded-lg shadow-inner max-h-80 overflow-y-auto">
+                <div id="sourcesContainer" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 p-2 bg-gray-50 rounded-lg shadow-inner">
                     <!-- Source blocks will be injected here by JavaScript -->
                 </div>
                 <!-- Source Pagination Controls -->
@@ -86,7 +119,7 @@
             <!-- Destinations Section -->
             <div class="space-y-4">
                 <h2 class="text-xl font-semibold text-gray-800 text-center" id="destinationsHeader">Destinations (Page: Tech)</h2>
-                <div id="destinationsContainer" class="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-10 gap-3 p-2 bg-gray-50 rounded-lg shadow-inner max-h-80 overflow-y-auto">
+                <div id="destinationsContainer" class="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-7 gap-3 p-2 bg-gray-50 rounded-lg shadow-inner">
                     <!-- Destination blocks will be injected here by JavaScript -->
                 </div>
                 <!-- Destination Pagination Controls -->
@@ -261,12 +294,12 @@
                 const isCurrentlyRoutingToSelectedDestination = pendingDestination && routingMap.get(source) === pendingDestination;
 
                 const blockDiv = document.createElement('div');
-                let blockClasses = `p-3 rounded-lg text-center font-medium transition-colors duration-200 cursor-pointer select-none`;
+                let blockClasses = `p-3 text-center font-medium router-block cursor-pointer select-none`;
 
                 if (isHighlighted) {
-                    blockClasses += ' bg-red-500 text-white shadow-lg';
+                    blockClasses += ' bg-red-500 text-white highlighted-red';
                 } else if (isCurrentlyRoutingToSelectedDestination) {
-                    blockClasses += ' bg-purple-200 text-purple-800 border-2 border-purple-500 shadow-md';
+                    blockClasses += ' bg-purple-200 text-purple-800 border-2 border-purple-500 highlighted-purple';
                 } else {
                     blockClasses += ' bg-green-100 text-green-800 hover:bg-green-200';
                 }
@@ -317,12 +350,12 @@
                     pendingSource && routingMap.get(pendingSource) === destination && pendingDestination !== destination;
 
                 const blockDiv = document.createElement('div');
-                let blockClasses = `p-3 rounded-lg text-center font-medium transition-colors duration-200 cursor-pointer select-none`;
+                let blockClasses = `p-3 text-center font-medium router-block cursor-pointer select-none`;
 
                 if (isHighlighted) {
-                    blockClasses += ' bg-red-500 text-white shadow-lg';
+                    blockClasses += ' bg-red-500 text-white highlighted-red';
                 } else if (isCurrentDestinationForPendingSource) {
-                    blockClasses += ' bg-blue-300 text-blue-900 shadow-md border-2 border-blue-500';
+                    blockClasses += ' bg-blue-300 text-blue-900 border-2 border-blue-500 highlighted-blue';
                 } else {
                     blockClasses += ' bg-orange-100 text-orange-800 hover:bg-orange-200';
                 }
@@ -397,6 +430,27 @@
             pendingDestination = destination;
             resetButtonColorTimeout();
             console.log(`Destination selected: ${destination}`);
+
+            // Find the source currently routed to the selected destination
+            let sourceRoutedToDest = null;
+            for (let [src, dest] of routingMap.entries()) {
+                if (dest === destination) {
+                    sourceRoutedToDest = src;
+                    break;
+                }
+            }
+
+            // If a source is found, navigate to its page
+            if (sourceRoutedToDest) {
+                const sourceIndex = allSources.indexOf(sourceRoutedToDest);
+                if (sourceIndex !== -1) {
+                    const pageForSource = Math.ceil((sourceIndex + 1) / itemsPerPageSource);
+                    if (currentPageSource !== pageForSource) {
+                        currentPageSource = pageForSource;
+                        // Do NOT clear pendingSource here, as the user might want to Take it.
+                    }
+                }
+            }
             updateUI();
         }
 
@@ -405,9 +459,23 @@
                 // Save current routing map to history before updating
                 history.push(Array.from(routingMap.entries()));
 
-                // Update routing map
-                routingMap.set(pendingSource, pendingDestination);
+                // Ensure only one source routes to pendingDestination
+                // Find any existing source that maps to pendingDestination
+                let oldSourceMappedToDest = null;
+                for (let [src, dest] of routingMap.entries()) {
+                    if (dest === pendingDestination) {
+                        oldSourceMappedToDest = src;
+                        break;
+                    }
+                }
+                // If found, remove the old mapping
+                if (oldSourceMappedToDest) {
+                    routingMap.delete(oldSourceMappedToDest);
+                    console.log(`Removed old mapping: ${oldSourceMappedToDest} -> ${pendingDestination}`);
+                }
 
+                // Update routing map with new pendingSource -> pendingDestination
+                routingMap.set(pendingSource, pendingDestination);
                 simulateSnmpSet(pendingSource, pendingDestination);
 
                 // Clear pending selections after "Take"
@@ -440,11 +508,28 @@
 
             const routesToApply = salvoAction(allSources, allDestinations);
 
+            // Create a temporary map to build the new routing, respecting the "one dest, one source" rule
+            const tempRoutingMap = new Map(routingMap); // Start with current state
+
             routesToApply.forEach(({ source, destination }) => {
-                routingMap.set(source, destination);
+                // Before setting, check if the destination already exists in tempRoutingMap's values
+                // If it does, find the source currently mapped to it and remove that old mapping
+                let oldSourceMappedToThisDest = null;
+                for (let [src, dest] of tempRoutingMap.entries()) {
+                    if (dest === destination) {
+                        oldSourceMappedToThisDest = src;
+                        break;
+                    }
+                }
+                if (oldSourceMappedToThisDest) {
+                    tempRoutingMap.delete(oldSourceMappedToThisDest);
+                    console.log(`Salvo removed old mapping: ${oldSourceMappedToThisDest} -> ${destination}`);
+                }
+                tempRoutingMap.set(source, destination);
                 simulateSnmpSet(source, destination); // Simulate individual SNMP SETs
             });
 
+            routingMap = tempRoutingMap; // Apply the new, cleaned map
             pendingSource = null; // Clear any pending selections
             pendingDestination = null; // Clear any pending selections
             resetButtonColorTimeout();
@@ -457,8 +542,7 @@
             const totalPagesSource = Math.ceil(allSources.length / itemsPerPageSource);
             if (currentPageSource < totalPagesSource) {
                 currentPageSource++;
-                pendingSource = null; // Clear selection on page change
-                // Note: pendingDestination is NOT cleared here
+                pendingSource = null; // Clear source selection on page change
                 updateUI();
             }
         }
@@ -466,8 +550,7 @@
         function goToPreviousPageSource() {
             if (currentPageSource > 1) {
                 currentPageSource--;
-                pendingSource = null; // Clear selection on page change
-                // Note: pendingDestination is NOT cleared here
+                pendingSource = null; // Clear source selection on page change
                 updateUI();
             }
         }
@@ -476,8 +559,7 @@
             const totalPagesSource = Math.ceil(allSources.length / itemsPerPageSource);
             if (pageNumber >= 1 && pageNumber <= totalPagesSource) {
                 currentPageSource = pageNumber;
-                pendingSource = null; // Clear selection on page change
-                // Note: pendingDestination is NOT cleared here
+                pendingSource = null; // Clear source selection on page change
                 updateUI();
             }
         }
@@ -487,8 +569,7 @@
             const totalPagesDestination = Math.ceil(allDestinations.length / itemsPerPageDestination);
             if (currentPageDestination < totalPagesDestination) {
                 currentPageDestination++;
-                pendingDestination = null; // Clear selection on page change
-                // Note: pendingSource is NOT cleared here
+                pendingDestination = null; // Clear destination selection on page change
                 updateUI();
             }
         }
@@ -496,8 +577,7 @@
         function goToPreviousPageDestination() {
             if (currentPageDestination > 1) {
                 currentPageDestination--;
-                pendingDestination = null; // Clear selection on page change
-                // Note: pendingSource is NOT cleared here
+                pendingDestination = null; // Clear destination selection on page change
                 updateUI();
             }
         }
@@ -506,8 +586,7 @@
             const totalPagesDestination = Math.ceil(allDestinations.length / itemsPerPageDestination);
             if (pageNumber >= 1 && pageNumber <= totalPagesDestination) {
                 currentPageDestination = pageNumber;
-                pendingDestination = null; // Clear selection on page change
-                // Note: pendingSource is NOT cleared here
+                pendingDestination = null; // Clear destination selection on page change
                 updateUI();
             }
         }
@@ -528,7 +607,7 @@
             takeButton.addEventListener('click', handleTake);
             undoButton.addEventListener('click', handleUndo);
 
-            prevPageButtonSource.addEventListener('click', goToNextPageSource); // Fixed typo, should be prevPageButtonSource
+            prevPageButtonSource.addEventListener('click', goToPreviousPageSource);
             nextPageButtonSource.addEventListener('click', goToNextPageSource);
             prevPageButtonDestination.addEventListener('click', goToPreviousPageDestination);
             nextPageButtonDestination.addEventListener('click', goToNextPageDestination);
